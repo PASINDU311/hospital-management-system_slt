@@ -1,0 +1,857 @@
+
+/* ========================================
+   PATIENT MANAGEMENT PAGE
+======================================== */
+
+.patients-page {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.patients-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+
+.patients-heading h1 {
+  margin: 0;
+  color: #123b5d;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.patients-heading p {
+  margin: 8px 0 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.register-patient-button,
+.save-patient-button {
+  border: 0;
+  border-radius: 8px;
+  padding: 11px 17px;
+  background: #123b5d;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.register-patient-button:hover {
+  background: #0c2d48;
+}
+
+/* ========================================
+   PATIENT WORKSPACE
+======================================== */
+
+.patients-workspace {
+  display: grid;
+  grid-template-columns: minmax(280px, 350px) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+/* ========================================
+   PATIENT DIRECTORY
+======================================== */
+
+.patient-directory,
+.patient-profile {
+  min-width: 0;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.patient-directory-header {
+  padding: 20px 18px 14px;
+}
+
+.patient-directory-header h2,
+.patient-profile h2 {
+  margin: 0;
+  color: #123b5d;
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.patient-directory-header p {
+  margin: 6px 0 0;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.patient-directory > .patient-search-input {
+  display: block;
+  width: calc(100% - 36px);
+  max-width: none;
+  margin: 0 18px 16px;
+}
+
+.patient-search-input {
+  box-sizing: border-box;
+  padding: 11px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  outline: none;
+  color: #243447;
+  background: #fff;
+  font-size: 13px;
+}
+
+.patient-search-input:focus {
+  border-color: #16a6a0;
+  box-shadow: 0 0 0 3px #16a6a020;
+}
+
+.patient-directory-list {
+  border-top: 1px solid #e2e8f0;
+}
+
+.patient-directory-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 15px 18px;
+  border: 0;
+  border-bottom: 1px solid #f1f5f9;
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.patient-directory-item:hover {
+  background: #f4f8fb;
+}
+
+.patient-directory-item.active {
+  background: #eaf6f6;
+  border-left: 4px solid #16a6a0;
+  padding-left: 14px;
+}
+
+.patient-directory-avatar,
+.patient-profile-avatar {
+  display: flex;
+  flex-shrink: 0;
+  justify-content: center;
+  align-items: center;
+  width: 43px;
+  height: 43px;
+  border-radius: 50%;
+  background: #e0f2f1;
+  color: #087e78;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.patient-directory-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.patient-directory-info strong {
+  color: #243447;
+  font-size: 13px;
+}
+
+.patient-directory-info span {
+  color: #16a6a0;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.patient-directory-info small {
+  color: #64748b;
+  font-size: 11px;
+}
+
+/* ========================================
+   PATIENT PROFILE
+======================================== */
+
+.patient-profile {
+  padding: 22px;
+}
+
+.patient-profile-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.patient-profile-avatar {
+  width: 65px;
+  height: 65px;
+  font-size: 25px;
+}
+
+.patient-profile-header p {
+  margin: 6px 0;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.patient-profile-status {
+  display: inline-block;
+  padding: 5px 9px;
+  border-radius: 20px;
+  background: #dcfce7;
+  color: #15803d;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.patient-profile-details {
+  padding: 22px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.patient-profile-details h3,
+.patient-clinical-sections h3 {
+  margin: 0 0 17px;
+  color: #123b5d;
+  font-size: 16px;
+}
+
+.patient-profile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.patient-profile-grid div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.patient-profile-grid small {
+  color: #64748b;
+  font-size: 12px;
+}
+
+.patient-profile-grid strong {
+  color: #243447;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.patient-clinical-sections {
+  padding-top: 22px;
+}
+
+.patient-clinical-placeholder {
+  padding: 16px;
+  margin-bottom: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+  background: #f8fafc;
+}
+
+.patient-clinical-placeholder strong {
+  color: #123b5d;
+  font-size: 13px;
+}
+
+.patient-clinical-placeholder p {
+  margin: 7px 0 0;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.patient-profile-empty {
+  padding: 45px 20px;
+  text-align: center;
+}
+
+.patient-profile-empty p {
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.no-patients-message {
+  padding: 24px;
+  text-align: center;
+  color: #64748b;
+  font-size: 13px;
+}
+
+/* ========================================
+   PATIENT REGISTRATION FORM
+======================================== */
+
+.patient-registration-form {
+  padding: 22px;
+  margin-bottom: 22px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.patient-registration-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.patient-registration-heading h2 {
+  margin: 0;
+  color: #123b5d;
+  font-size: 19px;
+}
+
+.patient-registration-heading p {
+  margin: 6px 0 0;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.patient-registration-heading button {
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  background: #fff;
+  color: #475569;
+  cursor: pointer;
+}
+
+.patient-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.patient-registration-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.patient-registration-form input,
+.patient-registration-form select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 11px;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  outline: none;
+  background: #fff;
+  color: #243447;
+}
+
+.patient-registration-form input:focus,
+.patient-registration-form select:focus {
+  border-color: #16a6a0;
+}
+
+.save-patient-button {
+  margin-top: 20px;
+  background: #16a6a0;
+}
+
+.save-patient-button:hover {
+  background: #108780;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+======================================== */
+
+@media (max-width: 900px) {
+  .patients-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .patient-directory-list {
+    max-height: 350px;
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 600px) {
+  .patients-heading h1 {
+    font-size: 21px;
+  }
+
+  .register-patient-button {
+    width: 100%;
+  }
+
+  .patient-profile {
+    padding: 16px;
+  }
+
+  .patient-form-grid,
+  .patient-profile-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .patient-registration-form {
+    padding: 15px;
+  }
+}
+
+
+/* ========================================
+   PATIENT PROFILE HEADER IMPROVEMENTS
+======================================== */
+
+.patient-profile-heading-info {
+  min-width: 0;
+}
+
+.patient-profile-badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.patient-blood-badge {
+  padding: 5px 9px;
+  border-radius: 20px;
+  background: #e0f2f1;
+  color: #087e78;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* ========================================
+   CLINICAL VITALS
+======================================== */
+
+.patient-vitals-section {
+  padding: 22px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.patient-section-heading {
+  margin-bottom: 16px;
+}
+
+.patient-section-heading h3 {
+  margin: 0;
+  color: #123b5d;
+  font-size: 16px;
+}
+
+.patient-section-heading p {
+  margin: 6px 0 0;
+  color: #64748b;
+  font-size: 12px;
+}
+
+.patient-vitals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.patient-vital-card {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #16a6a0;
+  border-radius: 9px;
+  background: #f8fafc;
+}
+
+.patient-vital-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.patient-vital-icon {
+  font-size: 17px;
+}
+
+.patient-vital-reading {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  margin-top: 14px;
+}
+
+.patient-vital-reading strong {
+  color: #123b5d;
+  font-size: 23px;
+  font-weight: 700;
+}
+
+.patient-vital-reading small {
+  color: #64748b;
+  font-size: 11px;
+}
+
+.patient-vital-note {
+  display: block;
+  margin-top: 9px;
+  color: #64748b;
+  font-size: 10px;
+}
+
+/* Responsive Vitals */
+
+@media (max-width: 600px) {
+  .patient-vitals-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .patient-vital-card {
+    padding: 11px;
+  }
+}
+
+
+/* ========================================
+   CLINICAL RECORD TABS
+======================================== */
+
+.patient-clinical-tabs {
+  padding-top: 22px;
+}
+
+.patient-tabs-header {
+  margin-bottom: 16px;
+}
+
+.patient-tabs-header h3 {
+  margin: 0;
+  color: #123b5d;
+  font-size: 17px;
+}
+
+.patient-tabs-header p {
+  margin: 6px 0 0;
+  color: #64748b;
+  font-size: 12px;
+}
+
+.patient-tabs-navigation {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  border-bottom: 1px solid #e2e8f0;
+  scrollbar-width: thin;
+}
+
+.patient-tab-button {
+  flex-shrink: 0;
+  padding: 12px 14px;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  background: transparent;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.patient-tab-button:hover {
+  color: #16a6a0;
+  background: #f8fafc;
+}
+
+.patient-tab-button.active {
+  color: #123b5d;
+  border-bottom-color: #16a6a0;
+}
+
+.patient-tab-content {
+  min-height: 170px;
+  padding: 22px 16px;
+  background: #fff;
+}
+
+.patient-tab-content h4 {
+  margin: 0;
+  color: #123b5d;
+  font-size: 15px;
+}
+
+.patient-tab-content > p {
+  margin: 8px 0 18px;
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.patient-tab-empty {
+  display: inline-block;
+  padding: 9px 12px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 7px;
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 12px;
+}
+
+@media (max-width: 600px) {
+  .patient-tab-button {
+    padding: 11px 10px;
+    font-size: 11px;
+  }
+
+  .patient-tab-content {
+    padding: 18px 10px;
+  }
+}
+
+
+/* ========================================
+   DIAGNOSIS & MEDICAL HISTORY
+======================================== */
+
+.patient-diagnosis-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.patient-diagnosis-heading h4 {
+  margin: 0;
+  color: #123b5d;
+  font-size: 16px;
+}
+
+.patient-diagnosis-heading p {
+  margin: 6px 0 0;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.patient-add-diagnosis-button {
+  border: 0;
+  border-radius: 7px;
+  padding: 10px 14px;
+  background: #123b5d;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.patient-add-diagnosis-button:hover {
+  background: #0c2d48;
+}
+
+.patient-diagnosis-form {
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #f8fafc;
+}
+
+.patient-diagnosis-form > h4 {
+  margin: 0 0 16px;
+  color: #123b5d;
+  font-size: 15px;
+}
+
+.patient-diagnosis-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 15px;
+}
+
+.patient-diagnosis-form-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.patient-diagnosis-form-grid input,
+.patient-diagnosis-form-grid textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 11px;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  outline: none;
+  background: #fff;
+  color: #243447;
+  font: inherit;
+}
+
+.patient-diagnosis-form-grid input:focus,
+.patient-diagnosis-form-grid textarea:focus {
+  border-color: #16a6a0;
+  box-shadow: 0 0 0 3px #16a6a020;
+}
+
+.patient-diagnosis-form-grid textarea {
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.patient-diagnosis-form > button {
+  margin-top: 18px;
+}
+
+.patient-diagnosis-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.patient-diagnosis-card {
+  padding: 17px;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #16a6a0;
+  border-radius: 9px;
+  background: #fff;
+}
+
+.patient-diagnosis-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.patient-diagnosis-card-header h4 {
+  margin: 0 0 6px;
+  color: #123b5d;
+  font-size: 15px;
+}
+
+.patient-diagnosis-card-header span {
+  color: #64748b;
+  font-size: 11px;
+}
+
+.patient-diagnosis-card > p {
+  margin: 9px 0 0;
+  color: #475569;
+  font-size: 12px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.patient-diagnosis-card > p strong {
+  color: #243447;
+}
+
+.patient-delete-diagnosis-button {
+  padding: 7px 10px;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  background: #fef2f2;
+  color: #dc2626;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.patient-delete-diagnosis-button:hover {
+  background: #fee2e2;
+}
+
+@media (max-width: 600px) {
+  .patient-diagnosis-form {
+    padding: 14px;
+  }
+
+  .patient-diagnosis-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .patient-diagnosis-heading {
+    align-items: flex-start;
+  }
+}
+
+
+/* ========================================
+   PRESCRIPTION MANAGEMENT
+======================================== */
+
+.patient-prescription-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.patient-prescription-card {
+  padding: 17px;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #16a6a0;
+  border-radius: 9px;
+  background: #fff;
+}
+
+.patient-prescription-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.patient-prescription-card-header h4 {
+  margin: 0 0 6px;
+  color: #123b5d;
+  font-size: 15px;
+}
+
+.patient-prescription-card-header span {
+  color: #64748b;
+  font-size: 11px;
+}
+
+.patient-prescription-card > p {
+  margin: 9px 0 0;
+  color: #475569;
+  font-size: 12px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.patient-prescription-card > p strong {
+  color: #243447;
+}
+
+@media (max-width: 600px) {
+  .patient-prescription-card {
+    padding: 13px;
+  }
+}
