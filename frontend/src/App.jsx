@@ -4,6 +4,7 @@ import './App.css'
 import Dashboard from './pages/Dashboard/Dashboard'
 import MainLayout from './components/layout/MainLayout'
 import Patients from './pages/Patients/Patients'
+import Doctors from './pages/Doctors/Doctors'
 
 function App() {
   const [activePage, setActivePage] = useState('dashboard')
@@ -17,6 +18,8 @@ function App() {
         <Dashboard />
       ) : activePage === 'patients' ? (
         <Patients />
+      ) : activePage === 'doctors' ? (
+        <Doctors />
       ) : (
         <main className="dashboard">
           <h1 style={{ color: '#123B5D' }}>

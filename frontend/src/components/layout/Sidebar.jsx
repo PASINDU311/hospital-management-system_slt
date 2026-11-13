@@ -3,7 +3,7 @@ function Sidebar({ activePage, onNavigate }) {
   const navigationItems = [
     { id: 'dashboard', icon: 'grid_view', label: 'Dashboard' },
     { id: 'patients', icon: 'personal_injury', label: 'Patients & EMR' },
-    { id: 'appointments', icon: 'calendar_month', label: 'Doctors & Scheduling' },
+    { id: 'doctors', icon: 'calendar_month', label: 'Doctors & Scheduling' },
     { id: 'laboratory', icon: 'biotech', label: 'Clinical Laboratory' },
     { id: 'pharmacy', icon: 'medication', label: 'Pharmacy Inventory' },
     { id: 'billing', icon: 'receipt_long', label: 'Billing & Inpatient' },
