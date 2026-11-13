@@ -33,6 +33,19 @@ function Doctors() {
         setDoctorToEdit(null);
         setIsRegistrationOpen(false);
     };
+
+    const handleDeleteDoctor = (doctorId) => {
+        const confirmDelete = window.confirm(
+            'Are you sure you want to delete this doctor?'
+        );
+
+        if (confirmDelete) {
+            setRegisteredDoctors((previousDoctors) =>
+            previousDoctors.filter((doctor) => doctor.id !== doctorId)
+            );
+        }
+    };
+
   const summaryCards = [
     {
       title: 'Active Doctors',
@@ -308,25 +321,78 @@ function Doctors() {
         ) : (
           <div>
             {registeredDoctors.map((doctor) => (
-              <div key={doctor.id}>
-                <strong>
-                  Dr. {doctor.firstName} {doctor.lastName}
-                </strong>
-                <p>{doctor.specialization} · {doctor.department}</p>
-                <p>{doctor.email} · {doctor.phone}</p>
-                <p>License: {doctor.licenseNumber}</p>
-                <button
-                    type="button"
-                    onClick={() => {
+                <div className="registered-doctor-card" key={doctor.id}>
+
+                    <div className="registered-doctor-card-header">
+                    <div className="registered-doctor-avatar">
+                        <span className="material-symbols-outlined">
+                        medical_services
+                        </span>
+                    </div>
+
+                    <div className="registered-doctor-main-info">
+                        <h3>
+                        Dr. {doctor.firstName} {doctor.lastName}
+                        </h3>
+                        <p>{doctor.specialization} · {doctor.department}</p>
+                    </div>
+
+                    <span className="doctor-registered-badge">
+                        Registered
+                    </span>
+                    </div>
+
+                    <div className="registered-doctor-details">
+                    <div className="registered-doctor-detail">
+                        <span className="material-symbols-outlined">mail</span>
+                        <div>
+                        <small>Email Address</small>
+                        <p>{doctor.email}</p>
+                        </div>
+                    </div>
+
+                    <div className="registered-doctor-detail">
+                        <span className="material-symbols-outlined">call</span>
+                        <div>
+                        <small>Phone Number</small>
+                        <p>{doctor.phone}</p>
+                        </div>
+                    </div>
+
+                    <div className="registered-doctor-detail">
+                        <span className="material-symbols-outlined">badge</span>
+                        <div>
+                        <small>Medical License</small>
+                        <p>{doctor.licenseNumber}</p>
+                        </div>
+                    </div>
+                    </div>
+
+                    <div className="registered-doctor-card-actions">
+                    <button
+                        type="button"
+                        className="doctor-edit-btn"
+                        onClick={() => {
                         setDoctorToEdit(doctor);
                         setIsRegistrationOpen(true);
-                    }}
-                >
-                    <span className="material-symbols-outlined">edit</span>
-                    Edit
-                </button>
-              </div>
-            ))}
+                        }}
+                    >
+                        <span className="material-symbols-outlined">edit</span>
+                        Edit Details
+                    </button>
+
+                    <button
+                        type="button"
+                        className="doctor-delete-btn"
+                        onClick={() => handleDeleteDoctor(doctor.id)}
+                    >
+                        <span className="material-symbols-outlined">delete</span>
+                        Delete
+                    </button>
+                    </div>
+
+                </div>
+                ))}
           </div>
         )}
       </section>
