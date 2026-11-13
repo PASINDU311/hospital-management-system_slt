@@ -2,9 +2,11 @@
 import React, { useState } from 'react';
 import './Doctors.css';
 import DoctorRegistration from '../../components/doctors/DoctorRegistration';
+import AppointmentBooking from '../../components/doctors/AppointmentBooking';
 
 function Doctors() {
   const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
+  const [isAppointmentBookingOpen, setIsAppointmentBookingOpen] = useState(false);
   const [registeredDoctors, setRegisteredDoctors] = useState([]);
   const [doctorToEdit, setDoctorToEdit] = useState(null);
     const handleRegisterDoctor = (doctorData) => {
@@ -44,6 +46,111 @@ function Doctors() {
             previousDoctors.filter((doctor) => doctor.id !== doctorId)
             );
         }
+    };
+
+    const [appointments, setAppointments] = useState([
+        {
+            id: 1,
+            time: '10:15 AM',
+            patientName: 'Marcus Henderson',
+            patientMrn: 'MRN-90241-CA',
+            doctor: 'Dr. Donald Vance',
+            department: 'Cardiology',
+            visitType: 'Urgent Triage',
+            room: 'Cabin 302',
+            status: 'In Progress',
+        },
+        {
+            id: 2,
+            time: '10:30 AM',
+            patientName: "Liam O'Connor",
+            patientMrn: 'MRN-88410-PD',
+            doctor: 'Dr. Mateo Ramos',
+            department: 'Pediatrics',
+            visitType: 'First Visit',
+            room: 'Peds Wing B-1',
+            status: 'Confirmed',
+        },
+        {
+            id: 3,
+            time: '11:00 AM',
+            patientName: 'Charlotte Lin',
+            patientMrn: 'MRN-77319-NE',
+            doctor: 'Dr. Elena Thorne',
+            department: 'Neurology',
+            visitType: 'Routine Follow-up',
+            room: 'Cabin 410',
+            status: 'Scheduled',
+        },
+        {
+            id: 4,
+            time: '11:30 AM',
+            patientName: 'Arthur Pendleton',
+            patientMrn: 'MRN-44912-GS',
+            doctor: 'Dr. Sarah Jenkins',
+            department: 'General Surgery',
+            visitType: 'Post-Op Check',
+            room: 'Recovery Ste 2',
+            status: 'Confirmed',
+        },
+        {
+            id: 5,
+            time: '09:00 AM',
+            patientName: 'Annette Becker',
+            patientMrn: 'MRN-33109-CA',
+            doctor: 'Dr. Donald Vance',
+            department: 'Cardiology',
+            visitType: 'Routine Follow-up',
+            room: 'Cabin 302',
+            status: 'Completed',
+        },
+    ]);
+    const [appointmentStatusFilter, setAppointmentStatusFilter] = useState('All Statuses');
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const filteredAppointments = appointments.filter((appointment) => {
+        if (appointmentStatusFilter === 'All Statuses') {
+            return true;
+        }
+
+        return appointment.status === appointmentStatusFilter;
+    });
+
+    const appointmentsPerPage = 5;
+
+    const totalPages = Math.ceil(
+        filteredAppointments.length / appointmentsPerPage
+    );
+
+    const startIndex = (currentPage - 1) * appointmentsPerPage;
+
+    const currentAppointments = filteredAppointments.slice(
+        startIndex,
+        startIndex + appointmentsPerPage
+    );
+
+    const handleBookAppointment = (appointmentData) => {
+        console.log('Appointment submitted:', appointmentData);
+
+        const newAppointment = {
+            ...appointmentData,
+            id: Date.now(),
+            status: 'Confirmed',
+            room: 'Not Assigned',
+        };
+
+        setAppointments((previousAppointments) => {
+            const updatedAppointments = [
+                ...previousAppointments,
+                newAppointment,
+            ];
+
+            console.log('Updated appointments:', updatedAppointments);
+
+            return updatedAppointments;
+        });
+
+        setIsAppointmentBookingOpen(false);
     };
 
   const summaryCards = [
@@ -136,6 +243,13 @@ function Doctors() {
         />
         )}
 
+        {isAppointmentBookingOpen && (
+            <AppointmentBooking
+                onClose={() => setIsAppointmentBookingOpen(false)}
+                onSave={handleBookAppointment}
+            />
+        )}
+
       {/* Schedule Navigation */}
       <section className="schedule-navigation">
 
@@ -185,7 +299,11 @@ function Doctors() {
             New Doctor Schedule
           </button>
 
-          <button className="book-appointment-btn">
+          <button
+            type="button"
+            className="book-appointment-btn"
+            onClick={() => setIsAppointmentBookingOpen(true)}
+          >
             <span className="material-symbols-outlined">add_circle</span>
             Book New Appointment
           </button>
@@ -409,10 +527,17 @@ function Doctors() {
 
           <div className="queue-header-actions">
             <span className="active-appointments-count">
-              14 Active Today
+                {appointments.filter((appointment) => appointment.status !== 'Completed' && appointment.status !== 'Cancelled').length} Active Today
             </span>
 
-            <select aria-label="Filter appointments by status">
+            <select
+                aria-label="Filter appointments by status"
+                value={appointmentStatusFilter}
+                onChange={(event) => {
+                    setAppointmentStatusFilter(event.target.value);
+                    setCurrentPage(1);
+                }}
+            >
               <option>All Statuses</option>
               <option>Confirmed</option>
               <option>In Progress</option>
@@ -420,7 +545,12 @@ function Doctors() {
               <option>Cancelled</option>
             </select>
 
-            <button type="button" className="queue-refresh-btn">
+            <button
+                type="button"
+                className="queue-refresh-btn"
+                onClick={() => setAppointments((currentAppointments) => [...currentAppointments])}
+                title="Refresh appointment queue"
+            >
               <span className="material-symbols-outlined">refresh</span>
             </button>
           </div>
@@ -440,92 +570,61 @@ function Doctors() {
             </thead>
 
             <tbody>
-              <tr>
-                <td>10:15 AM</td>
-                <td>
-                  <strong>Marcus Henderson</strong>
-                  <small>MRN-90241-CA</small>
-                </td>
-                <td>
-                  <strong>Dr. Donald Vance</strong>
-                  <small>Cardiology</small>
-                </td>
-                <td><span className="visit-type urgent">Urgent Triage</span></td>
-                <td>Cabin 302</td>
-                <td><span className="appointment-status in-progress">In Progress</span></td>
-              </tr>
-
-              <tr>
-                <td>10:30 AM</td>
-                <td>
-                  <strong>Liam O'Connor</strong>
-                  <small>MRN-88410-PD</small>
-                </td>
-                <td>
-                  <strong>Dr. Mateo Ramos</strong>
-                  <small>Pediatrics</small>
-                </td>
-                <td><span className="visit-type first-visit">First Visit</span></td>
-                <td>Peds Wing B-1</td>
-                <td><span className="appointment-status confirmed">Confirmed</span></td>
-              </tr>
-
-              <tr>
-                <td>11:00 AM</td>
-                <td>
-                  <strong>Charlotte Lin</strong>
-                  <small>MRN-77319-NE</small>
-                </td>
-                <td>
-                  <strong>Dr. Elena Thorne</strong>
-                  <small>Neurology</small>
-                </td>
-                <td><span className="visit-type routine">Routine Follow-up</span></td>
-                <td>Cabin 410</td>
-                <td><span className="appointment-status scheduled">Scheduled</span></td>
-              </tr>
-
-              <tr>
-                <td>11:30 AM</td>
-                <td>
-                  <strong>Arthur Pendleton</strong>
-                  <small>MRN-44912-GS</small>
-                </td>
-                <td>
-                  <strong>Dr. Sarah Jenkins</strong>
-                  <small>General Surgery</small>
-                </td>
-                <td><span className="visit-type post-op">Post-Op Check</span></td>
-                <td>Recovery Ste 2</td>
-                <td><span className="appointment-status confirmed">Confirmed</span></td>
-              </tr>
-
-              <tr>
-                <td>09:00 AM</td>
-                <td>
-                  <strong>Annette Becker</strong>
-                  <small>MRN-33109-CA</small>
-                </td>
-                <td>
-                  <strong>Dr. Donald Vance</strong>
-                  <small>Cardiology</small>
-                </td>
-                <td><span className="visit-type routine">Routine Follow-up</span></td>
-                <td>Cabin 302</td>
-                <td><span className="appointment-status completed">Completed</span></td>
-              </tr>
+              {currentAppointments.map((appointment) => (
+                <tr key={appointment.id}>
+                    <td>{appointment.time}</td>
+                    <td>
+                        <strong>{appointment.patientName}</strong>
+                        <small>{appointment.patientMrn}</small>
+                    </td>
+                    <td>
+                        <strong>{appointment.doctor}</strong>
+                        <small>{appointment.department}</small>
+                    </td>
+                    <td>
+                        <span className="visit-type routine">
+                            {appointment.visitType}
+                        </span>
+                    </td>
+                    <td>{appointment.room}</td>
+                    <td>
+                        <span className={`appointment-status ${appointment.status.toLowerCase().replace(' ', '-')}`}>
+                            {appointment.status}
+                        </span>
+                    </td>
+                </tr>
+            ))}
             </tbody>
           </table>
         </div>
 
         <div className="appointment-queue-footer">
-          <span>Showing 1 to 5 of 148 scheduled appointments</span>
+          <span>Showing {filteredAppointments.length === 0 ? 0 : startIndex + 1} to {Math.min(startIndex + appointmentsPerPage, filteredAppointments.length)} of {filteredAppointments.length} scheduled appointments</span>
           <div className="queue-pagination">
-            <button type="button" disabled>Prev</button>
-            <button type="button" className="current-page">1</button>
-            <button type="button">2</button>
-            <button type="button">3</button>
-            <button type="button">Next</button>
+            <button
+                type="button"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((previousPage) => Math.max(previousPage - 1, 1))}
+            >
+                Prev
+            </button>
+            {Array.from({ length: totalPages }, (_, index) => (
+                <button
+                    key={index + 1}
+                    type="button"
+                    className={currentPage === index + 1 ? 'current-page' : ''}
+                    onClick={() => setCurrentPage(index + 1)}
+                >
+                    {index + 1}
+                </button>
+            ))}
+            <button
+                type="button"
+                disabled={currentPage === totalPages || totalPages === 0}
+                onClick={() => setCurrentPage((previousPage) => Math.min(previousPage + 1, totalPages))}
+            >
+                Next
+            </button>
           </div>
         </div>
 
