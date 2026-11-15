@@ -5,6 +5,28 @@ function Laboratory() {
         const [searchTerm, setSearchTerm] = useState('')
         const [selectedDivision, setSelectedDivision] = useState('All Divisions')
         const [selectedPriority, setSelectedPriority] = useState('All Tiers')
+        const [activeTab, setActiveTab] = useState('All Lab Orders')
+        const [currentPage, setCurrentPage] = useState(1)
+        const handleSearchChange = (value) => {
+            setSearchTerm(value)
+            setCurrentPage(1)
+        }
+
+        const handleDivisionChange = (value) => {
+            setSelectedDivision(value)
+            setCurrentPage(1)
+        }
+
+        const handlePriorityChange = (value) => {
+            setSelectedPriority(value)
+            setCurrentPage(1)
+        }
+
+        const handleTabChange = (tab) => {
+            setActiveTab(tab)
+            setCurrentPage(1)
+        }
+        const ordersPerPage = 5
         const [isOrderModalOpen, setIsOrderModalOpen] = useState(false)
         const [newOrder, setNewOrder] = useState({
             patient: '',
@@ -132,8 +154,51 @@ function Laboratory() {
                     ? order.priority === 'STAT / Critical'
                     : order.priority === selectedPriority)
 
-            return matchesSearch && matchesDivision && matchesPriority
+            const matchesTab =
+                activeTab === 'All Lab Orders' ||
+                (activeTab === 'STAT / Critical Queue' &&
+                    (order.priority === 'STAT' || order.priority === 'STAT / Critical')) ||
+                (activeTab === 'Sample Collection' &&
+                    order.status === 'Pending Collection') ||
+                (activeTab === 'Awaiting Sign-off' &&
+                    order.action === 'Sign-off') ||
+                (activeTab === 'Synced to EMR' &&
+                    order.status === 'EMR Validated')
+
+            return matchesSearch && matchesDivision && matchesPriority && matchesTab
+            
         })
+
+        const paginatedLabOrders = filteredLabOrders.slice(
+                (currentPage - 1) * ordersPerPage,
+                currentPage * ordersPerPage
+        )
+
+        const totalPages = Math.ceil(
+                filteredLabOrders.length / ordersPerPage
+        )
+
+        const tabCounts = {
+            all: labOrders.length,
+
+            critical: labOrders.filter(
+                (order) =>
+                order.priority === 'STAT' ||
+                order.priority === 'STAT / Critical'
+            ).length,
+
+            collection: labOrders.filter(
+                (order) => order.status === 'Pending Collection'
+            ).length,
+
+            signOff: labOrders.filter(
+                (order) => order.action === 'Sign-off'
+            ).length,
+
+            synced: labOrders.filter(
+                (order) => order.status === 'EMR Validated'
+            ).length
+        }
 
   return (
     <main className="laboratory-page">
@@ -207,24 +272,43 @@ function Laboratory() {
 
             <section className="lab-orders-section">
                 <div className="lab-orders-tabs">
-                <button type="button" className="lab-tab active">
-                    All Lab Orders <span>384</span>
+                <button
+                    type="button"
+                    className={`lab-tab ${activeTab === 'All Lab Orders' ? 'active' : ''}`}
+                    onClick={() => handleTabChange('All Lab Orders')}
+                >
+                    All Lab Orders <span>{tabCounts.all}</span>
                 </button>
 
-                <button type="button" className="lab-tab critical">
-                    ✳ STAT / Critical Queue <span>14</span>
+                <button
+                    type="button"
+                    className={`lab-tab critical ${activeTab === 'STAT / Critical Queue' ? 'active' : ''}`}
+                    onClick={() => handleTabChange('STAT / Critical Queue')}
+                >
+                    ✳ STAT / Critical Queue <span>{tabCounts.critical}</span>
                 </button>
 
-                <button type="button" className="lab-tab">
-                    Sample Collection <span>28</span>
+                <button
+                    type="button"
+                    className={`lab-tab ${activeTab === 'Sample Collection' ? 'active' : ''}`}
+                    onClick={() => handleTabChange('Sample Collection')}
+                >
+                    Sample Collection <span>{tabCounts.collection}</span>
                 </button>
 
-                <button type="button" className="lab-tab">
-                    Awaiting Sign-off <span>19</span>
+                <button
+                    type="button"
+                    className={`lab-tab ${activeTab === 'Awaiting Sign-off' ? 'active' : ''}`}
+                    onClick={() => handleTabChange('Awaiting Sign-off')}
+                >
+                    Awaiting Sign-off <span>{tabCounts.signOff}</span>
                 </button>
-
-                <button type="button" className="lab-tab">
-                    Synced to EMR <span>323</span>
+                <button
+                    type="button"
+                    className={`lab-tab ${activeTab === 'Synced to EMR' ? 'active' : ''}`}
+                    onClick={() => handleTabChange('Synced to EMR')}
+                >
+                    Synced to EMR <span>{tabCounts.synced}</span>
                 </button>
                 </div>
 
@@ -234,7 +318,7 @@ function Laboratory() {
                         <input
                             type="text"
                             value={searchTerm}
-                            onChange={(event) => setSearchTerm(event.target.value)}
+                            onChange={(event) => handleSearchChange(event.target.value)}
                             placeholder="Search test name, Specimen ID (#SPEC-), MRN, or Patient name..."
                         />
                     </div>
@@ -242,7 +326,7 @@ function Laboratory() {
                     <select
                         aria-label="Filter by division"
                         value={selectedDivision}
-                        onChange={(event) => setSelectedDivision(event.target.value)}
+                        onChange={(event) => handleDivisionChange(event.target.value)}
                     >
                         <option>All Divisions</option>
                         <option>Biochemistry</option>
@@ -254,7 +338,7 @@ function Laboratory() {
                     <select
                         aria-label="Filter by priority"
                         value={selectedPriority}
-                        onChange={(event) => setSelectedPriority(event.target.value)}
+                        onChange={(event) => handlePriorityChange(event.target.value)}
                     >
                         <option>All Tiers</option>
                         <option>Routine</option>
@@ -280,7 +364,7 @@ function Laboratory() {
 
                         <tbody>
                             {filteredLabOrders.length > 0 ? (
-                                filteredLabOrders.map((order) => (
+                                paginatedLabOrders.map((order) => (
                                 <tr key={order.id}>
                                     <td>{order.priority}</td>
                                     <td>{order.specimen}</td>
@@ -309,16 +393,43 @@ function Laboratory() {
                 </div>
 
                 <div className="lab-pagination">
-                    <span>Showing 1 - 6 of 384 active clinical specimens</span>
+                    <span>
+                        Showing {filteredLabOrders.length === 0
+                            ? 0
+                            : (currentPage - 1) * ordersPerPage + 1}
+                        {' - '}
+                        {Math.min(currentPage * ordersPerPage, filteredLabOrders.length)}
+                        {' of '}
+                        {filteredLabOrders.length} active clinical specimens
+                    </span>
 
                     <div className="lab-pagination-controls">
-                        <button type="button" disabled>‹</button>
-                        <button type="button" className="active">1</button>
-                        <button type="button">2</button>
-                        <button type="button">3</button>
-                        <span>...</span>
-                        <button type="button">64</button>
-                        <button type="button">›</button>
+                        <button
+                            type="button"
+                            disabled={currentPage === 1}
+                            onClick={() => setCurrentPage((page) => page - 1)}
+                        >
+                            ‹
+                        </button>
+
+                        {Array.from({ length: totalPages }, (_, index) => (
+                            <button
+                                key={index + 1}
+                                type="button"
+                                className={currentPage === index + 1 ? 'active' : ''}
+                                onClick={() => setCurrentPage(index + 1)}
+                            >
+                                {index + 1}
+                            </button>
+                        ))}
+
+                        <button
+                            type="button"
+                            disabled={currentPage === totalPages || totalPages === 0}
+                            onClick={() => setCurrentPage((page) => page + 1)}
+                        >
+                            ›
+                        </button>
                     </div>
                 </div>
             </section>
