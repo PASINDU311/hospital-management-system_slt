@@ -1,0 +1,1080 @@
+.staff-reports-page {
+    padding: 22px;
+    background: #f4f7fa;
+    min-height: 100vh;
+    color: #243447;
+}
+
+.staff-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 20px;
+    padding: 20px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    margin-bottom: 16px;
+}
+
+.staff-breadcrumb {
+    color: #64748b;
+    font-size: 11px;
+    margin-bottom: 10px;
+}
+
+.staff-page-header h1 {
+    color: #102b4e;
+    font-size: 25px;
+    margin: 0 0 8px;
+    font-weight: 700;
+}
+
+.staff-page-header p {
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.6;
+    max-width: 530px;
+    margin: 0;
+}
+
+.staff-header-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.staff-header-actions button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 13px;
+    border: none;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.staff-header-actions .material-symbols-outlined {
+    font-size: 17px;
+}
+
+.staff-secondary-btn {
+    background: #eef2f6;
+    color: #243447;
+}
+
+.staff-teal-btn {
+    background: #087c78;
+    color: white;
+}
+
+.staff-primary-btn {
+    background: #123b5d;
+    color: white;
+}
+
+.staff-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.staff-metric-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #123b5d;
+    border-radius: 11px;
+    padding: 16px;
+    min-width: 0;
+}
+
+.staff-metric-card.teal-accent {
+    border-left-color: #087c78;
+}
+
+.staff-metric-card.cyan-accent {
+    border-left-color: #42d4d1;
+}
+
+.metric-label {
+    color: #64748b;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .4px;
+}
+
+.staff-metric-card h2 {
+    color: #102b4e;
+    font-size: 29px;
+    margin: 12px 0;
+}
+
+.staff-metric-card h2 small {
+    color: #64748b;
+    font-size: 10px;
+    font-weight: 500;
+}
+
+.metric-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 9px;
+    background: #f4f7fa;
+    border-radius: 7px;
+    padding: 10px;
+    font-size: 10px;
+    color: #64748b;
+}
+
+.metric-details b {
+    color: #123b5d;
+    margin-left: 4px;
+}
+
+.staff-progress {
+    height: 7px;
+    background: #e2e8f0;
+    border-radius: 20px;
+    overflow: hidden;
+    margin: 12px 0;
+}
+
+.staff-progress span {
+    display: block;
+    height: 100%;
+    background: #087c78;
+    border-radius: 20px;
+}
+
+.metric-warning {
+    color: #dc2626;
+    font-size: 11px;
+    margin-top: 10px;
+}
+
+.attendance-breakdown {
+    display: flex;
+    justify-content: space-between;
+    background: #f4f7fa;
+    padding: 10px 5px;
+    border-radius: 7px;
+    text-align: center;
+    color: #087c78;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.attendance-breakdown span small {
+    display: block;
+    color: #64748b;
+    font-size: 9px;
+    font-weight: 400;
+    margin-top: 4px;
+}
+
+.credential-warning {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 11px;
+    background: #fff1f2;
+    color: #dc2626;
+    border-radius: 7px;
+    font-size: 11px;
+}
+
+.credential-warning .material-symbols-outlined {
+    font-size: 17px;
+}
+
+.staff-main-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.8fr) minmax(270px, .9fr);
+    gap: 14px;
+    align-items: start;
+}
+
+.staff-workspace,
+.staff-profile-card,
+.staff-requests-card,
+.staff-credential-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 13px;
+    margin-bottom: 12px;
+}
+
+.staff-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 5px;
+    background: #eef2f6;
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+.staff-tabs button {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 10px 5px;
+    border-radius: 6px;
+    font-size: 11px;
+    color: #334155;
+    cursor: pointer;
+}
+
+.staff-tabs button.active {
+    background: white;
+    color: #123b5d;
+    font-weight: 700;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, .1);
+}
+
+.staff-filter-bar {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.staff-filter-bar button {
+    border: none;
+    background: #eef2f6;
+    padding: 7px 10px;
+    border-radius: 6px;
+    color: #334155;
+    font-size: 10px;
+    cursor: pointer;
+}
+
+.staff-filter-bar button.active {
+    background: #087c78;
+    color: white;
+}
+
+.staff-search-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.staff-search-row select,
+.staff-search-row input {
+    padding: 10px;
+    border: 1px solid #e2e8f0;
+    border-radius: 7px;
+    font-size: 11px;
+    color: #334155;
+    background: #fff;
+    min-width: 0;
+}
+
+.staff-search-row input {
+    flex: 1;
+}
+
+.roster-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 13px;
+}
+
+.roster-heading h3 {
+    font-size: 14px;
+    color: #102b4e;
+    margin: 0;
+}
+
+.roster-heading span {
+    color: #64748b;
+    font-size: 10px;
+}
+
+.staff-table-wrapper {
+    overflow-x: auto;
+    width: 100%;
+}
+
+.staff-roster-table {
+    width: 100%;
+    min-width: 680px;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.staff-roster-table th {
+    background: #f1f5f9;
+    color: #64748b;
+    font-size: 10px;
+    padding: 13px 9px;
+    white-space: nowrap;
+}
+
+.staff-roster-table td {
+    border-bottom: 1px solid #e2e8f0;
+    padding: 11px 8px;
+    font-size: 10px;
+}
+
+.staff-identity {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 175px;
+}
+
+.staff-avatar,
+.staff-profile-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    font-weight: 700;
+    color: white;
+    background: #123b5d;
+}
+
+.staff-avatar.teal {
+    background: #087c78;
+}
+
+.staff-avatar.grey {
+    background: #64748b;
+}
+
+.staff-identity strong {
+    display: block;
+    color: #123b5d;
+    font-size: 10px;
+}
+
+.staff-identity small {
+    display: block;
+    color: #64748b;
+    font-size: 9px;
+    margin-top: 4px;
+}
+
+.shift-badge {
+    display: block;
+    padding: 8px 6px;
+    border-radius: 5px;
+    text-align: center;
+    white-space: nowrap;
+    background: #d7eeeb;
+    color: #087c78;
+    font-size: 9px;
+}
+
+.shift-badge.night {
+    background: #123b5d;
+    color: white;
+}
+
+.shift-badge.off {
+    background: #e5e7eb;
+    color: #64748b;
+}
+
+.shift-badge.other {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.roster-footer {
+    padding-top: 13px;
+    color: #64748b;
+    font-size: 10px;
+}
+
+.staff-profile-card {
+    position: relative;
+}
+
+.staff-profile-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    font-size: 15px;
+    margin-bottom: 10px;
+}
+
+.staff-profile-card h3 {
+    display: inline-block;
+    color: #123b5d;
+    font-size: 15px;
+    margin: 0 7px 8px 0;
+}
+
+.staff-active-label {
+    background: #d7eeeb;
+    color: #087c78;
+    padding: 4px 7px;
+    border-radius: 5px;
+    font-size: 9px;
+    font-weight: 700;
+}
+
+.staff-profile-card > p {
+    font-size: 11px;
+    color: #64748b;
+    margin: 4px 0 14px;
+}
+
+.profile-details {
+    background: #f4f7fa;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.profile-details div {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 6px 0;
+    font-size: 10px;
+}
+
+.profile-details span {
+    color: #64748b;
+}
+
+.profile-details b {
+    color: #123b5d;
+    text-align: right;
+}
+
+.profile-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin: 12px 0;
+}
+
+.profile-tags span {
+    background: #e8f3f2;
+    color: #087c78;
+    padding: 5px 7px;
+    border-radius: 20px;
+    font-size: 9px;
+}
+
+.staff-profile-card h4 {
+    color: #123b5d;
+    font-size: 11px;
+    margin: 14px 0 0;
+}
+
+.staff-profile-card > p:last-child {
+    margin-bottom: 0;
+}
+
+.staff-requests-card h3,
+.staff-credential-card h3 {
+    color: #123b5d;
+    font-size: 14px;
+    margin: 3px 0 13px;
+}
+
+.request-item {
+    position: relative;
+    background: #f4f7fa;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.request-item strong {
+    display: block;
+    color: #123b5d;
+    font-size: 11px;
+    margin-bottom: 6px;
+}
+
+.request-item p,
+.request-item small {
+    color: #64748b;
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+.request-status {
+    float: right;
+    background: #d7eeeb;
+    color: #087c78;
+    border-radius: 5px;
+    padding: 4px 6px;
+    font-size: 9px;
+    font-weight: 700;
+}
+
+.request-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.request-actions button {
+    border: none;
+    border-radius: 5px;
+    padding: 7px 9px;
+    background: #e2e8f0;
+    color: #243447;
+    font-size: 10px;
+    cursor: pointer;
+}
+
+.request-actions button:last-child {
+    background: #087c78;
+    color: white;
+}
+
+.staff-credential-card p {
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 6px;
+    background: #f4f7fa;
+    color: #087c78;
+    font-size: 10px;
+}
+
+.staff-placeholder {
+    text-align: center;
+    padding: 65px 15px;
+    color: #64748b;
+}
+
+.staff-placeholder .material-symbols-outlined {
+    font-size: 40px;
+    color: #087c78;
+}
+
+.staff-placeholder h3 {
+    color: #123b5d;
+}
+
+@media (max-width: 1100px) {
+    .staff-main-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .staff-metrics-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 700px) {
+    .staff-reports-page {
+        padding: 12px;
+    }
+
+    .staff-page-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .staff-header-actions {
+        width: 100%;
+    }
+
+    .staff-metrics-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .staff-tabs {
+        flex-wrap: wrap;
+    }
+
+    .staff-tabs button {
+        min-width: 45%;
+    }
+
+    .staff-search-row {
+        flex-direction: column;
+    }
+
+    .roster-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+/* Staff Directory */
+
+.staff-directory {
+    width: 100%;
+    margin-top: 18px;
+}
+
+.staff-section-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.staff-section-heading h3 {
+    color: #123B5D;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 5px;
+}
+
+.staff-section-heading p {
+    color: #64748B;
+    font-size: 13px;
+    margin: 0;
+}
+
+.staff-section-heading > span {
+    background: #E6F5F3;
+    color: #087C78;
+    padding: 7px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.staff-directory-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+}
+
+.staff-directory-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    min-width: 650px;
+}
+
+.staff-directory-table thead {
+    background: #F1F5F9;
+}
+
+.staff-directory-table th {
+    padding: 14px 16px;
+    color: #475569;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.staff-directory-table td {
+    padding: 14px 16px;
+    color: #475569;
+    font-size: 13px;
+    border-top: 1px solid #E2E8F0;
+}
+
+.staff-directory-table tbody tr:hover {
+    background: #F8FAFC;
+}
+
+.staff-directory-person {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 200px;
+}
+
+.staff-directory-person > span {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #E0F2F1;
+    color: #087C78;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.staff-directory-person strong {
+    color: #123B5D;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.staff-directory-status {
+    display: inline-block;
+    padding: 5px 10px;
+    background: #DCFCE7;
+    color: #15803D;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+/* Staff Registration Modal */
+
+.staff-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 1000;
+}
+
+.staff-modal {
+    background: #FFFFFF;
+    width: 100%;
+    max-width: 520px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 14px;
+    padding: 26px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+}
+
+.staff-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+}
+
+.staff-modal-header h2 {
+    color: #123B5D;
+    font-size: 21px;
+    margin: 0 0 7px;
+}
+
+.staff-modal-header p {
+    color: #64748B;
+    font-size: 13px;
+    margin: 0;
+}
+
+.staff-modal-header > button {
+    border: none;
+    background: #F1F5F9;
+    color: #475569;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    font-size: 23px;
+    cursor: pointer;
+}
+
+.staff-modal form {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.staff-modal form label {
+    color: #334155;
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 8px;
+}
+
+.staff-modal form input,
+.staff-modal form select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    border: 1px solid #CBD5E1;
+    border-radius: 8px;
+    background: #FFFFFF;
+    color: #243447;
+    font-size: 13px;
+    outline: none;
+}
+
+.staff-modal form input:focus,
+.staff-modal form select:focus {
+    border-color: #16A6A0;
+    box-shadow: 0 0 0 3px rgba(22, 166, 160, 0.12);
+}
+
+.staff-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.staff-cancel-btn {
+    padding: 11px 18px;
+    border: 1px solid #CBD5E1;
+    background: #FFFFFF;
+    color: #475569;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.staff-modal-actions .staff-primary-btn {
+    padding: 11px 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* Staff Registration Success / Error Notification */
+
+.staff-notification {
+    position: fixed;
+    top: 85px;
+    right: 30px;
+    z-index: 2000;
+    width: 380px;
+    max-width: calc(100vw - 40px);
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 17px;
+    background: #FFFFFF;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(15, 23, 42, 0.16);
+    border-left: 5px solid;
+    animation: staffNotificationSlide 0.3s ease-out;
+}
+
+.staff-notification.success {
+    border-left-color: #16A34A;
+}
+
+.staff-notification.error {
+    border-left-color: #DC2626;
+}
+
+.staff-notification > span {
+    font-size: 27px;
+}
+
+.staff-notification.success > span {
+    color: #16A34A;
+}
+
+.staff-notification.error > span {
+    color: #DC2626;
+}
+
+.staff-notification-content {
+    flex: 1;
+}
+
+.staff-notification-content strong {
+    display: block;
+    color: #123B5D;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.staff-notification-content p {
+    color: #64748B;
+    font-size: 12px;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.staff-notification > button {
+    border: none;
+    background: transparent;
+    color: #64748B;
+    font-size: 23px;
+    cursor: pointer;
+    align-self: flex-start;
+}
+
+@keyframes staffNotificationSlide {
+    from {
+        opacity: 0;
+        transform: translateX(25px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@media (max-width: 480px) {
+    .staff-notification {
+        top: 75px;
+        right: 12px;
+        width: calc(100vw - 48px);
+    }
+}
+
+/* Department Management */
+
+.staff-department-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 22px;
+}
+
+.staff-department-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px;
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    transition: 0.2s ease;
+}
+
+.staff-department-card:hover {
+    border-color: #16A6A0;
+    box-shadow: 0 4px 14px rgba(18, 59, 93, 0.08);
+}
+
+.staff-department-icon {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #E6F5F3;
+    color: #087C78;
+    border-radius: 10px;
+}
+
+.staff-department-icon span {
+    font-size: 23px;
+}
+
+.staff-department-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.staff-department-info h4 {
+    color: #123B5D;
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0 0 6px;
+}
+
+.staff-department-info p {
+    color: #64748B;
+    font-size: 12px;
+    margin: 0;
+}
+
+.staff-department-delete {
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 8px;
+    background: #FEF2F2;
+    color: #DC2626;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.staff-department-delete:hover {
+    background: #FEE2E2;
+}
+
+.staff-section-heading .staff-primary-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 11px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #123B5D;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.staff-section-heading .staff-primary-btn:hover {
+    background: #087C78;
+}
+
+@media (max-width: 700px) {
+    .staff-department-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Department Delete Confirmation Modal */
+
+.staff-delete-modal {
+    max-width: 430px;
+    text-align: center;
+}
+
+.staff-delete-icon {
+    width: 64px;
+    height: 64px;
+    margin: 5px auto 18px;
+    border-radius: 50%;
+    background: #FEF2F2;
+    color: #DC2626;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.staff-delete-icon span {
+    font-size: 32px;
+}
+
+.staff-delete-content h2 {
+    color: #123B5D;
+    font-size: 21px;
+    margin: 0 0 12px;
+}
+
+.staff-delete-content p {
+    color: #64748B;
+    font-size: 13px;
+    line-height: 1.7;
+    margin: 0;
+}
+
+.staff-delete-content strong {
+    color: #123B5D;
+    font-weight: 700;
+}
+
+.staff-delete-modal .staff-modal-actions {
+    justify-content: center;
+    margin-top: 25px;
+}
+
+.staff-confirm-delete-btn {
+    padding: 11px 18px;
+    border: none;
+    border-radius: 8px;
+    background: #DC2626;
+    color: #FFFFFF;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.staff-confirm-delete-btn:hover {
+    background: #B91C1C;
+}

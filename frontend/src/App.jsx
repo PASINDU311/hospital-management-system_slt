@@ -8,6 +8,7 @@ import Doctors from './pages/Doctors/Doctors'
 import Laboratory from './pages/Laboratory/Laboratory'
 import Pharmacy from './pages/Pharmacy/Pharmacy'
 import Billing from './pages/Billing/Billing'
+import StaffReports from './pages/StaffReports/StaffReports'
 
 function App() {
   const [activePage, setActivePage] = useState('dashboard')
@@ -29,6 +30,8 @@ function App() {
         <Pharmacy />
       ) : activePage === 'billing' ? (
         <Billing />
+      ) : activePage === 'reports' ? (
+        <StaffReports />
       ) : (
         <main className="dashboard">
           <h1 style={{ color: '#123B5D' }}>
