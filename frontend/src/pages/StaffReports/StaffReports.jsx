@@ -349,6 +349,55 @@ function StaffReports() {
         })
     }
 
+
+    const handleExportDepartmentReport = () => {
+        const allStaff = [...staffMembers, ...registeredStaff]
+
+        const rows = [
+            ['Department', 'Total Staff', 'Present', 'Absent'],
+            ...departments.map(department => {
+                const departmentStaff = allStaff.filter(
+                    staff => staff.department === department
+                )
+
+                const departmentAttendance = attendanceRecords.filter(
+                    record => record.department === department
+                )
+
+                return [
+                    department,
+                    departmentStaff.length,
+                    departmentAttendance.filter(r => r.status === 'Present').length,
+                    departmentAttendance.filter(r => r.status === 'Absent').length
+                ]
+            })
+        ]
+
+        const csvContent = rows
+            .map(row => row.map(value =>
+                `"${String(value).replace(/"/g, '""')}"`
+            ).join(','))
+            .join('\n')
+
+        const blob = new Blob(
+            ['\uFEFF' + csvContent],
+            { type: 'text/csv;charset=utf-8;' }
+        )
+
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+
+        link.href = url
+        link.download = 'hospital-department-workforce-report.csv'
+
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+
+        URL.revokeObjectURL(url)
+    }
+
+
     const handleAddDepartment = (departmentName) => {
         const name = departmentName.trim()
 
@@ -1352,9 +1401,14 @@ function StaffReports() {
                                         <h3>Workforce Reports & Analytics</h3>
                                         <p>Overview of staff, attendance and leave management.</p>
                                     </div>
-                                    <span className="staff-report-date">
-                                        Report Overview
-                                    </span>
+                                    <button
+                                        type="button"
+                                        className="staff-report-export-btn"
+                                        onClick={handleExportDepartmentReport}
+                                    >
+                                        <span className="material-symbols-outlined">download</span>
+                                        Export CSV
+                                    </button>
                                 </div>
 
                                 <div className="staff-report-cards">

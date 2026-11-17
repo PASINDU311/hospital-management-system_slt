@@ -1630,3 +1630,21 @@
         grid-template-columns: 1fr;
     }
 }
+
+.staff-report-export-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 7px;
+    background: #087C78;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.staff-report-export-btn:hover {
+    background: #066763;
+}
