@@ -39,6 +39,49 @@ function StaffReports() {
     const [departmentDetails, setDepartmentDetails] = useState({})
     const [isStaffModalOpen, setIsStaffModalOpen] = useState(false)
     const [registeredStaff, setRegisteredStaff] = useState([])
+    const [attendanceRecords, setAttendanceRecords] = useState([
+        {
+            id: 1,
+            staffId: 1,
+            name: 'Dr. Sarah Jenkins, MD',
+            department: 'General Surgery',
+            date: '2026-11-18',
+            checkIn: '07:00',
+            checkOut: '15:00',
+            status: 'Present',
+        },
+        {
+            id: 2,
+            staffId: 2,
+            name: 'Marcus Webb, BSN, RN',
+            department: 'ICU',
+            date: '2026-11-18',
+            checkIn: '07:25',
+            checkOut: '',
+            status: 'Late',
+        },
+        {
+            id: 3,
+            staffId: 3,
+            name: 'Dr. Donald Vance, MD',
+            department: 'Cardiology',
+            date: '2026-11-18',
+            checkIn: '07:00',
+            checkOut: '15:00',
+            status: 'Present',
+        },
+        {
+            id: 4,
+            staffId: 4,
+            name: 'Elena Rostova, RN',
+            department: 'Emergency',
+            date: '2026-11-18',
+            checkIn: '',
+            checkOut: '',
+            status: 'Absent',
+        },
+    ])
+    const [attendanceDateFilter, setAttendanceDateFilter] = useState('2026-11-18')
     const [staffNotification, setStaffNotification] = useState({
         type: '',
         message: '',
@@ -62,6 +105,21 @@ function StaffReports() {
             staff.department === selectedDepartment
 
         return matchesSearch && matchesDepartment
+    })
+
+    const filteredAttendanceRecords = attendanceRecords.filter(record => {
+        const matchesSearch =
+            record.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            record.department.toLowerCase().includes(searchTerm.toLowerCase())
+
+        const matchesDepartment =
+            selectedDepartment === 'All Departments' ||
+            record.department === selectedDepartment
+
+        const matchesDate =
+            !attendanceDateFilter || record.date === attendanceDateFilter
+
+        return matchesSearch && matchesDepartment && matchesDate
     })
 
     const handleStaffSubmit = (e) => {
@@ -118,6 +176,66 @@ function StaffReports() {
             type: 'success',
             message: `${newStaff.name} has been registered successfully!`,
         })
+
+        setTimeout(() => {
+            setStaffNotification({ type: '', message: '' })
+        }, 4000)
+    }
+
+    const handleAttendanceAction = (staff) => {
+        const today = '2026-11-18'
+
+        const existingRecord = attendanceRecords.find(
+            record => record.staffId === staff.id && record.date === today
+        )
+
+        if (!existingRecord) {
+            setAttendanceRecords(previous => [
+                ...previous,
+                {
+                    id: Date.now(),
+                    staffId: staff.id,
+                    name: staff.name,
+                    department: staff.department,
+                    date: today,
+                    checkIn: new Date().toLocaleTimeString('en-GB', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                    }),
+                    checkOut: '',
+                    status: 'Present',
+                },
+            ])
+
+            setStaffNotification({
+                type: 'success',
+                message: `${staff.name} checked in successfully!`,
+            })
+        } else if (!existingRecord.checkOut) {
+            setAttendanceRecords(previous =>
+                previous.map(record =>
+                    record.id === existingRecord.id
+                        ? {
+                            ...record,
+                            checkOut: new Date().toLocaleTimeString('en-GB', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                            }),
+                        }
+                        : record
+                )
+            )
+
+            setStaffNotification({
+                type: 'success',
+                message: `${staff.name} checked out successfully!`,
+            })
+        } else {
+            setStaffNotification({
+                type: 'error',
+                message: 'Attendance is already completed for today.',
+            })
+        }
 
         setTimeout(() => {
             setStaffNotification({ type: '', message: '' })
@@ -686,6 +804,29 @@ function StaffReports() {
                                 onChange={e => setSearchTerm(e.target.value)}
                             />
 
+                            {activeTab === 'attendance' && (
+                                <div className="staff-attendance-date-filter">
+                                    <label htmlFor="attendance-date">
+                                        <span className="material-symbols-outlined">calendar_month</span>
+                                        Attendance Date
+                                    </label>
+
+                                    <input
+                                        type="date"
+                                        id="attendance-date"
+                                        value={attendanceDateFilter}
+                                        onChange={(e) => setAttendanceDateFilter(e.target.value)}
+                                    />
+
+                                    <button
+                                        type="button"
+                                        onClick={() => setAttendanceDateFilter('')}
+                                    >
+                                        Clear Date
+                                    </button>
+                                </div>
+                            )}
+
                         </div>
 
                         {activeTab === 'departments' && (
@@ -892,10 +1033,104 @@ function StaffReports() {
                         )}
 
                         {activeTab === 'attendance' && (
-                            <div className="staff-placeholder">
-                                <span className="material-symbols-outlined">fact_check</span>
-                                <h3>Attendance & Timesheets</h3>
-                                <p>Staff attendance and working hour records.</p>
+                            <div className="staff-attendance">
+                                <div className="staff-section-heading">
+                                    <div>
+                                        <h3>Attendance & Timesheets</h3>
+                                        <p>Monitor daily staff attendance and working hours.</p>
+                                    </div>
+                                    <span>{attendanceRecords.length} Records</span>
+                                </div>
+
+                                <div className="staff-attendance-summary">
+                                    <div>
+                                        <span>Present</span>
+                                        <strong>{attendanceRecords.filter(r => r.status === 'Present').length}</strong>
+                                    </div>
+                                    <div>
+                                        <span>Late</span>
+                                        <strong>{attendanceRecords.filter(r => r.status === 'Late').length}</strong>
+                                    </div>
+                                    <div>
+                                        <span>Absent</span>
+                                        <strong>{attendanceRecords.filter(r => r.status === 'Absent').length}</strong>
+                                    </div>
+                                </div>
+
+                                <div className="staff-attendance-table-wrapper">
+                                    <table className="staff-attendance-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Staff Member</th>
+                                                <th>Department</th>
+                                                <th>Check In</th>
+                                                <th>Check Out</th>
+                                                <th>Working Hours</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            {filteredAttendanceRecords.length > 0 ? (
+                                                filteredAttendanceRecords.map(record => (
+                                                    <tr key={record.id}>
+                                                        <td>{record.name}</td>
+                                                        <td>{record.department}</td>
+                                                        <td>{record.checkIn || '--'}</td>
+                                                        <td>{record.checkOut || '--'}</td>
+                                                        <td>
+                                                            {record.checkIn && record.checkOut
+                                                                ? (() => {
+                                                                    const [inHour, inMinute] = record.checkIn.split(':').map(Number)
+                                                                    const [outHour, outMinute] = record.checkOut.split(':').map(Number)
+                                                                    const minutes = (outHour * 60 + outMinute) - (inHour * 60 + inMinute)
+                                                                    return minutes >= 0
+                                                                        ? `${Math.floor(minutes / 60)}h ${minutes % 60}m`
+                                                                        : '--'
+                                                                })()
+                                                                : 'In Progress'}
+                                                        </td>
+                                                        <td>
+                                                            <span className={`staff-attendance-status ${record.status.toLowerCase()}`}>
+                                                                {record.status}
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            {record.status === 'Absent' ? (
+                                                                <span className="staff-attendance-disabled">
+                                                                    Not Available
+                                                                </span>
+                                                            ) : (
+                                                                <button
+                                                                    type="button"
+                                                                    className="staff-attendance-action"
+                                                                    onClick={() => handleAttendanceAction({
+                                                                        id: record.staffId,
+                                                                        name: record.name,
+                                                                        department: record.department,
+                                                                    })}
+                                                                >
+                                                                    {record.checkOut
+                                                                        ? 'Completed'
+                                                                        : record.checkIn
+                                                                            ? 'Check Out'
+                                                                            : 'Check In'}
+                                                                </button>
+                                                            )}
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                            ) : (
+                                                <tr>
+                                                    <td colSpan="6" className="staff-attendance-empty">
+                                                        No attendance records found.
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         )}
 

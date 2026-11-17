@@ -1078,3 +1078,217 @@
 .staff-confirm-delete-btn:hover {
     background: #B91C1C;
 }
+
+/* Attendance & Timesheets */
+
+.staff-attendance {
+    width: 100%;
+    margin-top: 18px;
+}
+
+.staff-attendance-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin: 22px 0;
+}
+
+.staff-attendance-summary > div {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 18px;
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+}
+
+.staff-attendance-summary span {
+    color: #64748B;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.staff-attendance-summary strong {
+    color: #123B5D;
+    font-size: 25px;
+    font-weight: 700;
+}
+
+.staff-attendance-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+}
+
+.staff-attendance-table {
+    width: 100%;
+    min-width: 850px;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.staff-attendance-table thead {
+    background: #F1F5F9;
+}
+
+.staff-attendance-table th {
+    padding: 14px;
+    color: #475569;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.staff-attendance-table td {
+    padding: 15px 14px;
+    color: #475569;
+    font-size: 12px;
+    border-top: 1px solid #E2E8F0;
+}
+
+.staff-attendance-table tbody tr:hover {
+    background: #F8FAFC;
+}
+
+.staff-attendance-status {
+    display: inline-block;
+    padding: 6px 11px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.staff-attendance-status.present {
+    background: #DCFCE7;
+    color: #15803D;
+}
+
+.staff-attendance-status.late {
+    background: #FEF3C7;
+    color: #B45309;
+}
+
+.staff-attendance-status.absent {
+    background: #FEE2E2;
+    color: #DC2626;
+}
+
+.staff-attendance-action {
+    padding: 8px 13px;
+    border: none;
+    border-radius: 7px;
+    background: #E6F5F3;
+    color: #087C78;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.staff-attendance-action:hover {
+    background: #087C78;
+    color: #FFFFFF;
+}
+
+.staff-attendance-disabled {
+    color: #94A3B8;
+    font-size: 11px;
+}
+
+@media (max-width: 700px) {
+    .staff-attendance-summary {
+        grid-template-columns: 1fr;
+    }
+}
+
+.staff-attendance-empty {
+    text-align: center;
+    padding: 35px !important;
+    color: #94A3B8 !important;
+    font-size: 13px !important;
+}
+
+/* Compact Attendance Date Filter */
+
+.staff-attendance-date-filter {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    gap: 10px;
+    margin: 0 0 18px;
+    padding: 8px 12px;
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 9px;
+    width: fit-content;
+    max-width: 100%;
+    min-height: 48px;
+}
+
+.staff-attendance-date-filter label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    color: #123B5D;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.staff-attendance-date-filter label span {
+    color: #087C78;
+    font-size: 18px;
+}
+
+.staff-attendance-date-filter input {
+    width: 135px;
+    padding: 8px;
+    border: 1px solid #CBD5E1;
+    border-radius: 7px;
+    font-size: 12px;
+}
+
+.staff-attendance-date-filter button {
+    padding: 8px 11px;
+    white-space: nowrap;
+    border: none;
+    border-radius: 7px;
+    background: #E6F5F3;
+    color: #087C78;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+@media (max-width: 650px) {
+    .staff-attendance-date-filter {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+}
+
+/* Compact Department and Search Filters */
+
+.staff-search-row select {
+    height: 48px;
+    min-height: 48px;
+    padding: 8px 12px;
+    font-size: 12px;
+    border-radius: 8px;
+}
+
+.staff-search-row input[type="text"],
+.staff-search-row input:not([type="date"]) {
+    height: 48px;
+    min-height: 48px;
+    padding: 8px 12px;
+    font-size: 12px;
+    border-radius: 8px;
+}
+
+.staff-search-row {
+    align-items: center;
+}
