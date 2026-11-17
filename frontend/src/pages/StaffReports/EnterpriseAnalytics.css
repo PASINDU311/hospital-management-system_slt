@@ -150,6 +150,12 @@
     overflow-wrap: anywhere;
 }
 
+.enterprise-kpi-card:nth-child(2) h2 {
+    font-size: clamp(1.05rem, 1.45vw, 1.4rem);
+    white-space: nowrap;
+    letter-spacing: -0.03em;
+}
+
 .enterprise-kpi-card small {
     color: #64748B;
     font-size: 10px;

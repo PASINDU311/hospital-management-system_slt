@@ -43,6 +43,101 @@ function EnterpriseAnalytics() {
     const [timeRange, setTimeRange] = useState('30D')
     const [selectedDepartment, setSelectedDepartment] = useState('All Departments')
 
+
+    
+    const rangeMetrics = {
+        Today: {
+            encounters: '842',
+            billed: 'Rs. 128,500',
+            collections: 'Rs. 118,000',
+            cost: 'Rs. 72,000',
+            margin: '39.0%',
+            occupancy: '82.1%',
+            compliance: '97.8%'
+        },
+        '7D': {
+            encounters: '5,920',
+            billed: 'Rs. 895,000',
+            collections: 'Rs. 825,000',
+            cost: 'Rs. 510,000',
+            margin: '35.8%',
+            occupancy: '83.4%',
+            compliance: '98.0%'
+        },
+        '30D': {
+            encounters: '24,892',
+            billed: 'Rs. 3,842,500',
+            collections: 'Rs. 3,550,470',
+            cost: 'Rs. 2,120,000',
+            margin: '37.2%',
+            occupancy: '84.5%',
+            compliance: '98.2%'
+        },
+        'Q3 2026': {
+            encounters: '72,450',
+            billed: 'Rs. 11,250,000',
+            collections: 'Rs. 10,575,000',
+            cost: 'Rs. 6,750,000',
+            margin: '36.2%',
+            occupancy: '85.2%',
+            compliance: '98.4%'
+        },
+        YTD: {
+            encounters: '248,920',
+            billed: 'Rs. 38,425,000',
+            collections: 'Rs. 35,504,700',
+            cost: 'Rs. 21,200,000',
+            margin: '37.2%',
+            occupancy: '84.8%',
+            compliance: '98.3%'
+        }
+    }
+
+
+    const currentMetrics = rangeMetrics[timeRange]
+
+    const departmentFactors = {
+        'All Departments': 1,
+        Surgery: 0.28,
+        Cardiology: 0.18,
+        Laboratory: 0.16,
+        Pharmacy: 0.14,
+        Emergency: 0.20
+    }
+
+    const departmentFactor = departmentFactors[selectedDepartment] ?? 1
+
+    
+    const displayMetrics = {
+        ...currentMetrics,
+
+        encounters: selectedDepartment === 'All Departments'
+            ? currentMetrics.encounters
+            : Math.round(
+                Number(currentMetrics.encounters.replace(/,/g, '')) * departmentFactor
+            ).toLocaleString('en-US'),
+
+        billed: selectedDepartment === 'All Departments'
+            ? currentMetrics.billed
+            : `Rs. ${Math.round(
+                Number(currentMetrics.billed.replace(/[^0-9]/g, '')) * departmentFactor
+            ).toLocaleString('en-US')}`,
+
+        collections: selectedDepartment === 'All Departments'
+            ? currentMetrics.collections
+            : `Rs. ${Math.round(
+                Number(currentMetrics.collections.replace(/[^0-9]/g, '')) * departmentFactor
+            ).toLocaleString('en-US')}`,
+
+        cost: selectedDepartment === 'All Departments'
+            ? currentMetrics.cost
+            : `Rs. ${Math.round(
+                Number(currentMetrics.cost.replace(/[^0-9]/g, '')) * departmentFactor
+            ).toLocaleString('en-US')}`
+    }
+
+
+
     
 const handleExportReport = (reportName) => {
     const rows = [
@@ -180,7 +275,7 @@ const handleExportReport = (reportName) => {
                 <div className="enterprise-kpi-card">
                     <span className="enterprise-kpi-icon">groups</span>
                     <p>Clinical Encounters</p>
-                    <h2>24,892</h2>
+                    <h2>{displayMetrics.encounters}</h2>
                     <span className="enterprise-positive">+8.4% MoM</span>
                     <small>Outpatient: 18,420</small>
                     <small>Inpatient Admits: 6,472</small>
@@ -189,7 +284,7 @@ const handleExportReport = (reportName) => {
                 <div className="enterprise-kpi-card">
                     <span className="enterprise-kpi-icon">payments</span>
                     <p>Gross Billed & Collections</p>
-                    <h2>Rs. 3,842,500</h2>
+                    <h2>{displayMetrics.billed}</h2>
                     <span className="enterprise-positive">+11.8% vs Q2</span>
                     <small>Collection Velocity: 92.4%</small>
                     <small>Clean Claims Pass: 96.8%</small>
@@ -198,7 +293,7 @@ const handleExportReport = (reportName) => {
                 <div className="enterprise-kpi-card">
                     <span className="enterprise-kpi-icon">bed</span>
                     <p>Avg Bed Occupancy</p>
-                    <h2>84.5%</h2>
+                    <h2>{displayMetrics.occupancy}</h2>
                     <span className="enterprise-warning">High Density</span>
                     <small>ICU Unit Saturation: 91.2%</small>
                     <small>Surgical Occupancy: 78.4%</small>
@@ -207,7 +302,7 @@ const handleExportReport = (reportName) => {
                 <div className="enterprise-kpi-card">
                     <span className="enterprise-kpi-icon">verified</span>
                     <p>Clinical SLA Compliance</p>
-                    <h2>98.2%</h2>
+                    <h2>{displayMetrics.compliance}</h2>
                     <span className="enterprise-positive">Compliant</span>
                     <small>ED Door-to-Doctor: 18 min</small>
                     <small>Pharmacy Dispense: 14 min</small>
@@ -224,14 +319,14 @@ const handleExportReport = (reportName) => {
                                 <h3>Departmental Revenue vs Operational Expenditure</h3>
                                 <p>Monthly fiscal velocity, cash collections, and direct operational margin.</p>
                             </div>
-                            <span>Net Collections: Rs. 3,550,470</span>
+                            <span>Net Collections: {displayMetrics.collections}</span>
                         </div>
 
                         <div className="enterprise-financial-summary">
-                            <div><small>Total Billed</small><strong>Rs. 3,842,500</strong></div>
-                            <div><small>Net Collections</small><strong>Rs. 3,550,470</strong></div>
-                            <div><small>Operational Cost</small><strong>Rs. 2,120,000</strong></div>
-                            <div><small>Operating Margin</small><strong>37.2%</strong></div>
+                            <div><small>Total Billed</small><strong>{displayMetrics.billed}</strong></div>
+                            <div><small>Net Collections</small><strong>{displayMetrics.collections}</strong></div>
+                            <div><small>Operational Cost</small><strong>{displayMetrics.cost}</strong></div>
+                            <div><small>Operating Margin</small><strong>{currentMetrics.margin}</strong></div>
                         </div>
 
                         <div className="enterprise-chart">
@@ -242,16 +337,28 @@ const handleExportReport = (reportName) => {
                             </div>
 
                             <div className="enterprise-chart-bars">
-                                {revenueData.map(item => (
+                                {revenueData.map((item, index) => {
+                                    const rangeMultiplier = {
+                                        Today: 0.15,
+                                        '7D': 0.55,
+                                        '30D': 1,
+                                        'Q3 2026': 0.34,
+                                        YTD: 0.10
+                                    }
+
+                                    const multiplier = rangeMultiplier[timeRange] * departmentFactor
+
+                                    return (
                                     <div className="enterprise-chart-group" key={item.month}>
                                         <div className="enterprise-bar-set">
-                                            <span className="billed-bar" style={{ height: `${item.billed * 19}%` }}></span>
-                                            <span className="collection-bar" style={{ height: `${item.collections * 19}%` }}></span>
-                                            <span className="cost-bar" style={{ height: `${item.cost * 19}%` }}></span>
+                                            <span className="billed-bar" style={{ height: `${item.billed * multiplier * 19}%` }}></span>
+                                            <span className="collection-bar" style={{ height: `${item.collections * multiplier * 19}%` }}></span>
+                                            <span className="cost-bar" style={{ height: `${item.cost * multiplier * 19}%` }}></span>
                                         </div>
                                         <small>{item.month}</small>
                                     </div>
-                                ))}
+                                )
+                                })}
                             </div>
                         </div>
                     </section>
