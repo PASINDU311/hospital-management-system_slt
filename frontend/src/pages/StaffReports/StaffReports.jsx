@@ -174,18 +174,62 @@ function StaffReports() {
             return
         }
 
-        const added = handleAddDepartment(name)
+        const duplicate = departments.some(department =>
+            department.toLowerCase() === name.toLowerCase() &&
+            (!isEditDepartment || department !== originalDepartmentName)
+        )
 
-        if (!added) return
+        if (duplicate) {
+            setStaffNotification({
+                type: 'error',
+                message: 'This department already exists.',
+            })
+            return
+        }
 
-        setDepartmentDetails(previous => ({
-            ...previous,
-            [name]: {
-                head: departmentForm.head,
-                location: departmentForm.location,
-                contact: departmentForm.contact,
-            },
-        }))
+        if (isEditDepartment) {
+            const oldName = originalDepartmentName
+
+            setDepartments(previous =>
+                previous.map(department =>
+                    department === oldName ? name : department
+                )
+            )
+
+            setDepartmentDetails(previous => {
+                const updated = { ...previous }
+                delete updated[oldName]
+
+                updated[name] = {
+                    head: departmentForm.head,
+                    location: departmentForm.location,
+                    contact: departmentForm.contact,
+                }
+
+                return updated
+            })
+
+            setStaffNotification({
+                type: 'success',
+                message: `${name} department updated successfully!`,
+            })
+        } else {
+            setDepartments(previous => [...previous, name])
+
+            setDepartmentDetails(previous => ({
+                ...previous,
+                [name]: {
+                    head: departmentForm.head,
+                    location: departmentForm.location,
+                    contact: departmentForm.contact,
+                },
+            }))
+
+            setStaffNotification({
+                type: 'success',
+                message: `${name} department added successfully!`,
+            })
+        }
 
         setDepartmentForm({
             name: '',
@@ -195,6 +239,12 @@ function StaffReports() {
         })
 
         setIsDepartmentModalOpen(false)
+        setIsEditDepartment(false)
+        setOriginalDepartmentName('')
+
+        setTimeout(() => {
+            setStaffNotification({ type: '', message: '' })
+        }, 4000)
     }
 
     const handleConfirmDepartmentDelete = () => {
@@ -692,6 +742,27 @@ function StaffReports() {
                                                         ).length} Staff Members
                                                 </p>
                                             </div>
+
+                                            <button
+                                                type="button"
+                                                className="staff-department-edit"
+                                                title="Edit Department"
+                                                onClick={() => {
+                                                    setIsEditDepartment(true)
+                                                    setOriginalDepartmentName(department)
+
+                                                    setDepartmentForm({
+                                                        name: department,
+                                                        head: departmentDetails[department]?.head || '',
+                                                        location: departmentDetails[department]?.location || '',
+                                                        contact: departmentDetails[department]?.contact || '',
+                                                    })
+
+                                                    setIsDepartmentModalOpen(true)
+                                                }}
+                                            >
+                                                <span className="material-symbols-outlined">edit</span>
+                                            </button>
 
                                             <button
                                                 type="button"
