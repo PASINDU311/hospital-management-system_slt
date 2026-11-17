@@ -82,6 +82,50 @@ function StaffReports() {
         },
     ])
     const [attendanceDateFilter, setAttendanceDateFilter] = useState('2026-11-18')
+    const [leaveRequests, setLeaveRequests] = useState([
+        {
+            id: 1,
+            staffName: 'Marcus Webb, BSN, RN',
+            department: 'ICU',
+            leaveType: 'Annual Leave',
+            startDate: '2026-11-20',
+            endDate: '2026-11-22',
+            reason: 'Personal matters',
+            status: 'Pending'
+        },
+        {
+            id: 2,
+            staffName: 'Elena Rostova, RN',
+            department: 'Emergency',
+            leaveType: 'Medical Leave',
+            startDate: '2026-11-24',
+            endDate: '2026-11-25',
+            reason: 'Medical appointment',
+            status: 'Approved'
+        },
+        {
+            id: 3,
+            staffName: 'James Wilson, PharmD',
+            department: 'Inpatient Pharmacy',
+            leaveType: 'Casual Leave',
+            startDate: '2026-11-26',
+            endDate: '2026-11-26',
+            reason: 'Personal work',
+            status: 'Rejected'
+        }
+    ])
+
+    const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false)
+
+    const [leaveForm, setLeaveForm] = useState({
+        staffName: '',
+        department: '',
+        leaveType: 'Annual Leave',
+        startDate: '',
+        endDate: '',
+        reason: ''
+    })
+    
     const [staffNotification, setStaffNotification] = useState({
         type: '',
         message: '',
@@ -240,6 +284,69 @@ function StaffReports() {
         setTimeout(() => {
             setStaffNotification({ type: '', message: '' })
         }, 4000)
+    }
+
+    const handleLeaveSubmit = (e) => {
+        e.preventDefault()
+
+        if (
+            !leaveForm.staffName ||
+            !leaveForm.department ||
+            !leaveForm.startDate ||
+            !leaveForm.endDate ||
+            !leaveForm.reason.trim()
+        ) {
+            setStaffNotification({
+                type: 'error',
+                message: 'Please fill in all leave request fields.'
+            })
+            return
+        }
+
+        if (leaveForm.endDate < leaveForm.startDate) {
+            setStaffNotification({
+                type: 'error',
+                message: 'End date cannot be before start date.'
+            })
+            return
+        }
+
+        const newRequest = {
+            id: Date.now(),
+            ...leaveForm,
+            status: 'Pending'
+        }
+
+        setLeaveRequests(prev => [newRequest, ...prev])
+        setLeaveForm({
+            staffName: '',
+            department: '',
+            leaveType: 'Annual Leave',
+            startDate: '',
+            endDate: '',
+            reason: ''
+        })
+        setIsLeaveModalOpen(false)
+
+        setStaffNotification({
+            type: 'success',
+            message: 'Leave request submitted successfully!'
+        })
+    }
+
+    const handleLeaveStatus = (id, newStatus) => {
+        setLeaveRequests(prev =>
+            prev.map(request =>
+                request.id === id
+                    ? { ...request, status: newStatus }
+                    : request
+            )
+        )
+
+        setStaffNotification({
+            type: 'success',
+            message: `Leave request ${newStatus.toLowerCase()} successfully!`
+        })
     }
 
     const handleAddDepartment = (departmentName) => {
@@ -412,7 +519,9 @@ function StaffReports() {
                                     ? 'Department Deleted Successfully!'
                                     : staffNotification.message.includes('department added successfully')
                                         ? 'Department Added Successfully!'
-                                        : 'Registration Successful!'}
+                                        : staffNotification.message.includes('leave request submitted')
+                                            ? 'Leave Request Submitted!'
+                                            : 'Registration Successful!'}
                         </strong>
                         <p>{staffNotification.message}</p>
                     </div>
@@ -1135,10 +1244,210 @@ function StaffReports() {
                         )}
 
                         {activeTab === 'leave' && (
-                            <div className="staff-placeholder">
-                                <span className="material-symbols-outlined">event_busy</span>
-                                <h3>Leave & Absence</h3>
-                                <p>Manage leave requests and approvals.</p>
+                            <div className="staff-leave-section">
+                                <div className="staff-leave-header">
+                                    <div>
+                                        <h3>Leave & Absence Management</h3>
+                                        <p>Manage staff leave requests and approvals</p>
+                                    </div>
+
+                                    <button
+                                        className="staff-primary-btn"
+                                        onClick={() => setIsLeaveModalOpen(true)}
+                                    >
+                                        <span className="material-symbols-outlined">add</span>
+                                        New Leave Request
+                                    </button>
+                                </div>
+
+                                <div className="staff-leave-summary">
+                                    <div className="staff-leave-card">
+                                        <span>Pending Requests</span>
+                                        <h2>{leaveRequests.filter(r => r.status === 'Pending').length}</h2>
+                                    </div>
+                                    <div className="staff-leave-card">
+                                        <span>Approved Requests</span>
+                                        <h2>{leaveRequests.filter(r => r.status === 'Approved').length}</h2>
+                                    </div>
+                                    <div className="staff-leave-card">
+                                        <span>Rejected Requests</span>
+                                        <h2>{leaveRequests.filter(r => r.status === 'Rejected').length}</h2>
+                                    </div>
+                                </div>
+
+                                <div className="staff-leave-table-wrapper">
+                                    <table className="staff-leave-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Staff Member</th>
+                                                <th>Department</th>
+                                                <th>Leave Type</th>
+                                                <th>Start Date</th>
+                                                <th>End Date</th>
+                                                <th>Reason</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {leaveRequests.length > 0 ? (
+                                                leaveRequests.map(request => (
+                                                    <tr key={request.id}>
+                                                        <td>{request.staffName}</td>
+                                                        <td>{request.department}</td>
+                                                        <td>{request.leaveType}</td>
+                                                        <td>{request.startDate}</td>
+                                                        <td>{request.endDate}</td>
+                                                        <td>{request.reason}</td>
+                                                        <td>
+                                                            <span className={`staff-leave-status ${request.status.toLowerCase()}`}>
+                                                                {request.status}
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            {request.status === 'Pending' ? (
+                                                                <div className="staff-leave-actions">
+                                                                    <button
+                                                                        className="staff-leave-approve"
+                                                                        onClick={() => handleLeaveStatus(request.id, 'Approved')}
+                                                                    >
+                                                                        Approve
+                                                                    </button>
+                                                                    <button
+                                                                        className="staff-leave-reject"
+                                                                        onClick={() => handleLeaveStatus(request.id, 'Rejected')}
+                                                                    >
+                                                                        Reject
+                                                                    </button>
+                                                                </div>
+                                                            ) : (
+                                                                <span className="staff-leave-completed">Completed</span>
+                                                            )}
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                            ) : (
+                                                <tr>
+                                                    <td colSpan="8">No leave requests found.</td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        )}
+
+                        {isLeaveModalOpen && (
+                            <div className="staff-modal-overlay">
+                                <div className="staff-modal">
+                                    <div className="staff-modal-header">
+                                        <div>
+                                            <h3>New Leave Request</h3>
+                                            <p>Enter staff leave details</p>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={() => setIsLeaveModalOpen(false)}
+                                        >
+                                            ×
+                                        </button>
+                                    </div>
+
+                                    <form onSubmit={handleLeaveSubmit}>
+                                        <label>Staff Member *</label>
+                                        <select
+                                            value={leaveForm.staffName}
+                                            onChange={e => {
+                                                const selected = [...staffMembers, ...registeredStaff]
+                                                    .find(s => s.name === e.target.value)
+
+                                                setLeaveForm(prev => ({
+                                                    ...prev,
+                                                    staffName: e.target.value,
+                                                    department: selected?.department || ''
+                                                }))
+                                            }}
+                                            required
+                                        >
+                                            <option value="">Select Staff Member</option>
+                                            {[...staffMembers, ...registeredStaff].map((staff, index) => (
+                                                <option key={`${staff.id}-${index}`} value={staff.name}>
+                                                    {staff.name}
+                                                </option>
+                                            ))}
+                                        </select>
+
+                                        <label>Department</label>
+                                        <input value={leaveForm.department} readOnly />
+
+                                        <label>Leave Type *</label>
+                                        <select
+                                            value={leaveForm.leaveType}
+                                            onChange={e => setLeaveForm(prev => ({
+                                                ...prev,
+                                                leaveType: e.target.value
+                                            }))}
+                                        >
+                                            <option>Annual Leave</option>
+                                            <option>Casual Leave</option>
+                                            <option>Medical Leave</option>
+                                            <option>Unpaid Leave</option>
+                                            <option>Maternity Leave</option>
+                                        </select>
+
+                                        <div className="staff-leave-date-fields">
+                                            <div>
+                                                <label>Start Date *</label>
+                                                <input
+                                                    type="date"
+                                                    value={leaveForm.startDate}
+                                                    onChange={e => setLeaveForm(prev => ({
+                                                        ...prev,
+                                                        startDate: e.target.value
+                                                    }))}
+                                                    required
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label>End Date *</label>
+                                                <input
+                                                    type="date"
+                                                    value={leaveForm.endDate}
+                                                    min={leaveForm.startDate || undefined}
+                                                    onChange={e => setLeaveForm(prev => ({
+                                                        ...prev,
+                                                        endDate: e.target.value
+                                                    }))}
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <label>Reason *</label>
+                                        <textarea
+                                            value={leaveForm.reason}
+                                            onChange={e => setLeaveForm(prev => ({
+                                                ...prev,
+                                                reason: e.target.value
+                                            }))}
+                                            placeholder="Enter reason for leave"
+                                            required
+                                        />
+
+                                        <div className="staff-modal-actions">
+                                            <button
+                                                type="button"
+                                                onClick={() => setIsLeaveModalOpen(false)}
+                                            >
+                                                Cancel
+                                            </button>
+                                            <button type="submit" className="staff-primary-btn">
+                                                Submit Request
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         )}
 
