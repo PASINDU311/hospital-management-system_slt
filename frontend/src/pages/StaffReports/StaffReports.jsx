@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import './StaffReports.css'
+import EnterpriseAnalytics from './EnterpriseAnalytics'
 
 const staffMembers = [
     { id: 1, initials: 'SJ', name: 'Dr. Sarah Jenkins, MD', role: 'Chief of Surgery', department: 'General Surgery', shifts: ['Morning (OR)', 'Morning (OR)', 'Day / Clinic', 'On-Call 24h', 'Morning (OR)'], color: 'navy' },
@@ -1395,100 +1396,7 @@ function StaffReports() {
 
 
                         {activeTab === 'reports' && (
-                            <div className="staff-reports-dashboard">
-                                <div className="staff-reports-heading">
-                                    <div>
-                                        <h3>Workforce Reports & Analytics</h3>
-                                        <p>Overview of staff, attendance and leave management.</p>
-                                    </div>
-                                    <button
-                                        type="button"
-                                        className="staff-report-export-btn"
-                                        onClick={handleExportDepartmentReport}
-                                    >
-                                        <span className="material-symbols-outlined">download</span>
-                                        Export CSV
-                                    </button>
-                                </div>
-
-                                <div className="staff-report-cards">
-                                    <div className="staff-report-card">
-                                        <span className="material-symbols-outlined">groups</span>
-                                        <p>Total Registered Staff</p>
-                                        <h2>{staffMembers.length + registeredStaff.length}</h2>
-                                    </div>
-
-                                    <div className="staff-report-card">
-                                        <span className="material-symbols-outlined">event_available</span>
-                                        <p>Present Staff</p>
-                                        <h2>{attendanceRecords.filter(r => r.status === 'Present').length}</h2>
-                                    </div>
-
-                                    <div className="staff-report-card">
-                                        <span className="material-symbols-outlined">schedule</span>
-                                        <p>Late Arrivals</p>
-                                        <h2>{attendanceRecords.filter(r => r.status === 'Late').length}</h2>
-                                    </div>
-
-                                    <div className="staff-report-card">
-                                        <span className="material-symbols-outlined">event_busy</span>
-                                        <p>Pending Leave Requests</p>
-                                        <h2>{leaveRequests.filter(r => r.status === 'Pending').length}</h2>
-                                    </div>
-                                </div>
-
-                                <div className="staff-report-section">
-                                    <h3>Department Workforce Summary</h3>
-                                    <div className="staff-report-table-wrapper">
-                                        <table className="staff-report-table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Department</th>
-                                                    <th>Total Staff</th>
-                                                    <th>Present</th>
-                                                    <th>Absent</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {departments.map(department => {
-                                                    const departmentStaff = [...staffMembers, ...registeredStaff]
-                                                        .filter(s => s.department === department)
-
-                                                    const departmentAttendance = attendanceRecords
-                                                        .filter(r => r.department === department)
-
-                                                    return (
-                                                        <tr key={department}>
-                                                            <td>{department}</td>
-                                                            <td>{departmentStaff.length}</td>
-                                                            <td>{departmentAttendance.filter(r => r.status === 'Present').length}</td>
-                                                            <td>{departmentAttendance.filter(r => r.status === 'Absent').length}</td>
-                                                        </tr>
-                                                    )
-                                                })}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-
-                                <div className="staff-report-section">
-                                    <h3>Leave Request Summary</h3>
-                                    <div className="staff-report-leave-summary">
-                                        <div>
-                                            <span>Approved</span>
-                                            <strong>{leaveRequests.filter(r => r.status === 'Approved').length}</strong>
-                                        </div>
-                                        <div>
-                                            <span>Pending</span>
-                                            <strong>{leaveRequests.filter(r => r.status === 'Pending').length}</strong>
-                                        </div>
-                                        <div>
-                                            <span>Rejected</span>
-                                            <strong>{leaveRequests.filter(r => r.status === 'Rejected').length}</strong>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <EnterpriseAnalytics />
                         )}
 
 
