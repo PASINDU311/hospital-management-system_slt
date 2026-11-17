@@ -1476,3 +1476,157 @@
         grid-template-columns: 1fr;
     }
 }
+
+
+/* Reports & Analytics Dashboard */
+.staff-reports-dashboard {
+    width: 100%;
+    padding: 20px;
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    box-sizing: border-box;
+}
+
+.staff-reports-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 22px;
+}
+
+.staff-reports-heading h3 {
+    margin: 0 0 6px;
+    color: #123B5D;
+    font-size: 19px;
+}
+
+.staff-reports-heading p {
+    margin: 0;
+    color: #64748B;
+    font-size: 13px;
+}
+
+.staff-report-date {
+    padding: 8px 12px;
+    background: #E8F5F4;
+    color: #087C78;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.staff-report-cards {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 25px;
+}
+
+.staff-report-card {
+    padding: 17px;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    background: #F8FAFC;
+}
+
+.staff-report-card > span {
+    color: #087C78;
+    font-size: 25px;
+}
+
+.staff-report-card p {
+    margin: 12px 0 7px;
+    color: #64748B;
+    font-size: 12px;
+}
+
+.staff-report-card h2 {
+    margin: 0;
+    color: #123B5D;
+    font-size: 27px;
+}
+
+.staff-report-section {
+    margin-top: 22px;
+    padding: 18px;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+}
+
+.staff-report-section h3 {
+    margin: 0 0 16px;
+    color: #123B5D;
+    font-size: 16px;
+}
+
+.staff-report-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.staff-report-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 550px;
+}
+
+.staff-report-table th {
+    padding: 12px;
+    background: #F4F7FA;
+    color: #64748B;
+    text-align: left;
+    font-size: 11px;
+}
+
+.staff-report-table td {
+    padding: 13px 12px;
+    border-bottom: 1px solid #E2E8F0;
+    color: #334155;
+    font-size: 12px;
+}
+
+.staff-report-leave-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.staff-report-leave-summary > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+}
+
+.staff-report-leave-summary span {
+    color: #64748B;
+    font-size: 13px;
+}
+
+.staff-report-leave-summary strong {
+    color: #123B5D;
+    font-size: 21px;
+}
+
+@media (max-width: 900px) {
+    .staff-report-cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .staff-reports-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .staff-report-cards,
+    .staff-report-leave-summary {
+        grid-template-columns: 1fr;
+    }
+}
