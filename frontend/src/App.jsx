@@ -9,6 +9,7 @@ import Laboratory from './pages/Laboratory/Laboratory'
 import Pharmacy from './pages/Pharmacy/Pharmacy'
 import Billing from './pages/Billing/Billing'
 import StaffReports from './pages/StaffReports/StaffReports'
+import SettingsSecurity from './pages/SettingsSecurity/SettingsSecurity'
 
 function App() {
   const [activePage, setActivePage] = useState('dashboard')
@@ -32,31 +33,10 @@ function App() {
         <Billing />
       ) : activePage === 'reports' ? (
         <StaffReports />
+      ) : activePage === 'settings' ? (
+        <SettingsSecurity />
       ) : (
-        <main className="dashboard">
-          <h1 style={{ color: '#123B5D' }}>
-            Coming soon
-          </h1>
-
-          <p style={{ color: '#64748B' }}>
-            This module will be implemented in a later development step.
-          </p>
-
-          <button
-            type="button"
-            onClick={() => setActivePage('dashboard')}
-            style={{
-              border: 0,
-              borderRadius: 8,
-              padding: '10px 16px',
-              background: '#123B5D',
-              color: '#fff',
-              cursor: 'pointer',
-            }}
-          >
-            Back to Dashboard
-          </button>
-        </main>
+        <Dashboard />
       )}
     </MainLayout>
   )
