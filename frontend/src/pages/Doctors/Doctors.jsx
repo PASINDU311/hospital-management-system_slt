@@ -1,50 +1,102 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { api } from '../../services/api';
 import './Doctors.css';
 import DoctorRegistration from '../../components/doctors/DoctorRegistration';
 import AppointmentBooking from '../../components/doctors/AppointmentBooking';
 
 function Doctors() {
-  const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
-  const [isAppointmentBookingOpen, setIsAppointmentBookingOpen] = useState(false);
-  const [registeredDoctors, setRegisteredDoctors] = useState([]);
-  const [doctorToEdit, setDoctorToEdit] = useState(null);
-    const handleRegisterDoctor = (doctorData) => {
-        const newDoctor = {
-            ...doctorData,
-            id: Date.now(),
+    const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
+    const [isAppointmentBookingOpen, setIsAppointmentBookingOpen] = useState(false);
+    const [registeredDoctors, setRegisteredDoctors] = useState([]);
+    const [doctorToEdit, setDoctorToEdit] = useState(null);
+    const [doctorsLoading, setDoctorsLoading] = useState(true);
+    const [doctorsError, setDoctorsError] = useState('');
+
+    useEffect(() => {
+        let isMounted = true;
+
+        const fetchDoctors = async () => {
+            try {
+                const doctors = await api.get('/doctors');
+
+                if (isMounted) {
+                    setRegisteredDoctors(doctors);
+                    setDoctorsError('');
+                }
+            } catch (error) {
+                if (isMounted) {
+                    setDoctorsError(error.message || 'Failed to load doctors.');
+                }
+            } finally {
+                if (isMounted) {
+                    setDoctorsLoading(false);
+                }
+            }
         };
 
-        setRegisteredDoctors((previousDoctors) => [
-            ...previousDoctors,
-            newDoctor,
-        ]);
+        fetchDoctors();
 
-        setIsRegistrationOpen(false);
+        return () => {
+            isMounted = false;
+        };
+    }, []);
+    const handleRegisterDoctor = async (doctorData) => {
+        try {
+            const newDoctor = await api.post('/doctors', doctorData);
+
+            setRegisteredDoctors((previousDoctors) => [
+                ...previousDoctors,
+                newDoctor,
+            ]);
+
+            setIsRegistrationOpen(false);
+        } catch (error) {
+            alert(error.message || 'Failed to register doctor.');
+        }
     };
 
-    const handleUpdateDoctor = (doctorData) => {
-        setRegisteredDoctors((previousDoctors) =>
-            previousDoctors.map((doctor) =>
-                doctor.id === doctorToEdit.id
-                    ? { ...doctorData, id: doctorToEdit.id }
-                    : doctor
+    const handleUpdateDoctor = async (doctorData) => {
+        try {
+            const updatedDoctor = await api.put(
+                `/doctors/${doctorToEdit.id}`,
+                doctorData
+            );
+
+            setRegisteredDoctors((previousDoctors) =>
+                previousDoctors.map((doctor) =>
+                    doctor.id === doctorToEdit.id
+                        ? updatedDoctor
+                        : doctor
                 )
-        );
+            );
 
-        setDoctorToEdit(null);
-        setIsRegistrationOpen(false);
+            setDoctorToEdit(null);
+            setIsRegistrationOpen(false);
+        } catch (error) {
+            alert(error.message || 'Failed to update doctor.');
+        }
     };
 
-    const handleDeleteDoctor = (doctorId) => {
+    const handleDeleteDoctor = async (doctorId) => {
         const confirmDelete = window.confirm(
             'Are you sure you want to delete this doctor?'
         );
 
-        if (confirmDelete) {
+        if (!confirmDelete) {
+            return;
+        }
+
+        try {
+            await api.delete(`/doctors/${doctorId}`);
+
             setRegisteredDoctors((previousDoctors) =>
-            previousDoctors.filter((doctor) => doctor.id !== doctorId)
+                previousDoctors.filter(
+                    (doctor) => doctor.id !== doctorId
+                )
             );
+        } catch (error) {
+            alert(error.message || 'Failed to delete doctor.');
         }
     };
 
@@ -434,7 +486,11 @@ function Doctors() {
           </span>
         </div>
 
-        {registeredDoctors.length === 0 ? (
+        {doctorsLoading ? (
+            <p>Loading doctors...</p>
+        ) : doctorsError ? (
+            <p>{doctorsError}</p>
+        ) : registeredDoctors.length === 0 ? (
           <p>No doctors registered yet.</p>
         ) : (
           <div>
@@ -839,3 +895,4 @@ function Doctors() {
 }
 
 export default Doctors;
+
