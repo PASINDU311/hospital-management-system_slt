@@ -1,5 +1,8 @@
 
 import { useState } from 'react'
+import { useEffect } from 'react'
+import { api } from '../../services/api'
+
 
 const tabs = [
   'Clinical Notes',
@@ -71,6 +74,44 @@ function PatientClinicalTabs({ patient }) {
   const [showLabForm, setShowLabForm] = useState(false)
 
   const [diagnoses, setDiagnoses] = useState({})
+  const [diagnosesLoading, setDiagnosesLoading] = useState(false)
+  const [diagnosisError, setDiagnosisError] = useState('')
+
+  useEffect(() => {
+    let isActive = true
+
+    async function loadDiagnoses() {
+      try {
+        setDiagnosesLoading(true)
+        setDiagnosisError('')
+
+        const data = await api.get(`/patients/${patient.id}/diagnoses`)
+
+        if (isActive) {
+          setDiagnoses((current) => ({
+            ...current,
+            [patient.id]: data,
+          }))
+        }
+      } catch (error) {
+        if (isActive) {
+          setDiagnosisError(error.message || 'Failed to load diagnoses.')
+        }
+      } finally {
+        if (isActive) {
+          setDiagnosesLoading(false)
+        }
+      }
+    }
+
+    if (patient?.id) {
+      loadDiagnoses()
+    }
+
+    return () => {
+      isActive = false
+    }
+  }, [patient?.id])
   const [prescriptions, setPrescriptions] = useState({})
   const [labRecords, setLabRecords] = useState({})
 
@@ -101,38 +142,54 @@ function PatientClinicalTabs({ patient }) {
 
   
   // Save Diagnosis
-  function handleDiagnosisSubmit(event) {
+  async function handleDiagnosisSubmit(event) {
     event.preventDefault()
 
-    const newDiagnosis = {
-      ...formData,
-      id: Date.now(),
+    try {
+      setDiagnosisError('')
+
+      const newDiagnosis = await api.post(
+        `/patients/${patient.id}/diagnoses`,
+        formData
+      )
+
+      setDiagnoses((current) => ({
+        ...current,
+        [patient.id]: [
+          newDiagnosis,
+          ...(current[patient.id] || []),
+        ],
+      }))
+
+      setFormData(initialDiagnosisForm())
+      setShowDiagnosisForm(false)
+    } catch (error) {
+      setDiagnosisError(error.message || 'Failed to save diagnosis.')
     }
-
-    setDiagnoses((current) => ({
-      ...current,
-      [patient.id]: [
-        newDiagnosis,
-        ...(current[patient.id] || []),
-      ],
-    }))
-
-    setFormData(initialDiagnosisForm())
-    setShowDiagnosisForm(false)
   }
 
   // Delete Diagnosis
-  function handleDeleteDiagnosis(diagnosisId) {
+  async function handleDeleteDiagnosis(diagnosisId) {
     if (!window.confirm('Are you sure you want to delete this diagnosis?')) {
       return
     }
 
-    setDiagnoses((current) => ({
-      ...current,
-      [patient.id]: (current[patient.id] || []).filter(
-        (item) => item.id !== diagnosisId
-      ),
-    }))
+    try {
+      setDiagnosisError('')
+
+      await api.delete(
+        `/patients/${patient.id}/diagnoses/${diagnosisId}`
+      )
+
+      setDiagnoses((current) => ({
+        ...current,
+        [patient.id]: (current[patient.id] || []).filter(
+          (item) => item.id !== diagnosisId
+        ),
+      }))
+    } catch (error) {
+      setDiagnosisError(error.message || 'Failed to delete diagnosis.')
+    }
   }
 
   // Save Prescription
@@ -754,8 +811,18 @@ function PatientClinicalTabs({ patient }) {
               </form>
             )}
 
+            {diagnosisError && (
+              <p role="alert" className="patient-diagnosis-error">
+                {diagnosisError}
+              </p>
+            )}
+
             <div className="patient-diagnosis-list">
-              {patientDiagnoses.length === 0 ? (
+              {diagnosesLoading ? (
+                <div className="patient-tab-empty">
+                  Loading diagnosis records...
+                </div>
+              ) : patientDiagnoses.length === 0 ? (
                 <div className="patient-tab-empty">
                   No diagnosis records available yet.
                 </div>
