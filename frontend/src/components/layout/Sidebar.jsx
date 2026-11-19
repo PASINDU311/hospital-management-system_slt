@@ -1,5 +1,7 @@
+import { useState } from 'react'
 
-function Sidebar({ activePage, onNavigate }) {
+function Sidebar({ activePage, onNavigate, onLogout }) {
+  const [showProfileMenu, setShowProfileMenu] = useState(false)
   const navigationItems = [
     { id: 'dashboard', icon: 'grid_view', label: 'Dashboard' },
     { id: 'patients', icon: 'personal_injury', label: 'Patients & EMR' },
@@ -55,8 +57,26 @@ function Sidebar({ activePage, onNavigate }) {
             <b>Admin User</b>
             <small>Administrator</small>
           </div>
-          <button type="button" aria-label="Profile options">•••</button>
+          <button
+            type="button"
+            aria-label="Profile options"
+            onClick={() => setShowProfileMenu(!showProfileMenu)}
+          >
+            •••
+            <span className="material-symbols-outlined">
+              {showProfileMenu ? 'expand_less' : 'expand_more'}
+            </span>
+          </button>
         </div>
+
+        {showProfileMenu && (
+          <div className="profile-menu">
+            <button type="button" onClick={onLogout}>
+              <span className="material-symbols-outlined">logout</span>
+              Sign Out
+            </button>
+          </div>
+        )}
       </div>
     </aside>
   )
