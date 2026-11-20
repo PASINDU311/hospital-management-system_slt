@@ -201,6 +201,34 @@ function PatientClinicalTabs({ patient }) {
   const [showTimelineForm, setShowTimelineForm] = useState(false)
   const [timelineData, setTimelineData] = useState(initialTimelineForm)
   const [timelineRecords, setTimelineRecords] = useState({})
+    useEffect(() => {
+    let isMounted = true
+
+    async function loadTimelineRecords() {
+      if (!patient?.id) return
+
+      try {
+        const data = await api.get(
+          `/patients/${patient.id}/treatment-timeline`
+        )
+
+        if (isMounted) {
+          setTimelineRecords((current) => ({
+            ...current,
+            [patient.id]: data,
+          }))
+        }
+      } catch (error) {
+        console.error('Failed to load treatment timeline:', error)
+      }
+    }
+
+    loadTimelineRecords()
+
+    return () => {
+      isMounted = false
+    }
+  }, [patient?.id])
 
   const [showBillingForm, setShowBillingForm] = useState(false)
   const [billingRecords, setBillingRecords] = useState({})
@@ -391,38 +419,54 @@ function PatientClinicalTabs({ patient }) {
   }
 
   // Save Treatment Timeline Record
-  function handleTimelineSubmit(event) {
+  async function handleTimelineSubmit(event) {
     event.preventDefault()
 
-    const newRecord = {
-      ...timelineData,
-      id: Date.now(),
+    try {
+      const newRecord = await api.post(
+        `/patients/${patient.id}/treatment-timeline`,
+        timelineData
+      )
+
+      setTimelineRecords((current) => ({
+        ...current,
+        [patient.id]: [
+          newRecord,
+          ...(current[patient.id] || []),
+        ],
+      }))
+
+      setTimelineData(initialTimelineForm())
+      setShowTimelineForm(false)
+
+    } catch (error) {
+      console.error('Failed to save treatment:', error)
+      alert(error.message || 'Failed to save treatment record.')
     }
-
-    setTimelineRecords((current) => ({
-      ...current,
-      [patient.id]: [
-        newRecord,
-        ...(current[patient.id] || []),
-      ],
-    }))
-
-    setTimelineData(initialTimelineForm())
-    setShowTimelineForm(false)
   }
 
   // Delete Treatment Timeline Record
-  function handleDeleteTimeline(recordId) {
+  async function handleDeleteTimeline(recordId) {
     if (!window.confirm('Are you sure you want to delete this treatment record?')) {
       return
     }
 
-    setTimelineRecords((current) => ({
-      ...current,
-      [patient.id]: (current[patient.id] || []).filter(
-        (item) => item.id !== recordId
-      ),
-    }))
+    try {
+      await api.delete(
+        `/patients/${patient.id}/treatment-timeline/${recordId}`
+      )
+
+      setTimelineRecords((current) => ({
+        ...current,
+        [patient.id]: (current[patient.id] || []).filter(
+          (item) => String(item.id) !== String(recordId)
+        ),
+      }))
+
+    } catch (error) {
+      console.error('Failed to delete treatment:', error)
+      alert(error.message || 'Failed to delete treatment record.')
+    }
   }
 
 
