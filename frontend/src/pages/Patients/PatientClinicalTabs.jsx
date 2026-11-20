@@ -113,6 +113,43 @@ function PatientClinicalTabs({ patient }) {
     }
   }, [patient?.id])
   const [prescriptions, setPrescriptions] = useState({})
+  const [prescriptionsLoading, setPrescriptionsLoading] = useState(false)
+  const [prescriptionsError, setPrescriptionsError] = useState('')
+    useEffect(() => {
+    let isMounted = true
+
+    const loadPrescriptions = async () => {
+      if (!patient?.id) return
+
+      setPrescriptionsLoading(true)
+      setPrescriptionsError('')
+
+      try {
+        const data = await api.get(`/patients/${patient.id}/prescriptions`)
+
+        if (isMounted) {
+          setPrescriptions((prev) => ({
+            ...prev,
+            [patient.id]: data,
+          }))
+        }
+      } catch (error) {
+        if (isMounted) {
+          setPrescriptionsError(error.message || 'Failed to load prescriptions')
+        }
+      } finally {
+        if (isMounted) {
+          setPrescriptionsLoading(false)
+        }
+      }
+    }
+
+    loadPrescriptions()
+
+    return () => {
+      isMounted = false
+    }
+  }, [patient?.id])
   const [labRecords, setLabRecords] = useState({})
 
   const [formData, setFormData] = useState(initialDiagnosisForm)
@@ -193,38 +230,64 @@ function PatientClinicalTabs({ patient }) {
   }
 
   // Save Prescription
-  function handlePrescriptionSubmit(event) {
+  async function handlePrescriptionSubmit(event) {
     event.preventDefault()
 
-    const newPrescription = {
-      ...prescriptionData,
-      id: Date.now(),
+    setPrescriptionsLoading(true)
+    setPrescriptionsError('')
+
+    try {
+      const newPrescription = await api.post(
+        `/patients/${patient.id}/prescriptions`,
+        prescriptionData
+      )
+
+      setPrescriptions((current) => ({
+        ...current,
+        [patient.id]: [
+          newPrescription,
+          ...(current[patient.id] || []),
+        ],
+      }))
+
+      setPrescriptionData(initialPrescriptionForm())
+      setShowPrescriptionForm(false)
+    } catch (error) {
+      setPrescriptionsError(
+        error.message || 'Failed to save prescription'
+      )
+    } finally {
+      setPrescriptionsLoading(false)
     }
-
-    setPrescriptions((current) => ({
-      ...current,
-      [patient.id]: [
-        newPrescription,
-        ...(current[patient.id] || []),
-      ],
-    }))
-
-    setPrescriptionData(initialPrescriptionForm())
-    setShowPrescriptionForm(false)
   }
 
   // Delete Prescription
-  function handleDeletePrescription(prescriptionId) {
+  async function handleDeletePrescription(prescriptionId) {
     if (!window.confirm('Are you sure you want to delete this prescription?')) {
       return
     }
 
-    setPrescriptions((current) => ({
-      ...current,
-      [patient.id]: (current[patient.id] || []).filter(
-        (item) => item.id !== prescriptionId
-      ),
-    }))
+    setPrescriptionsLoading(true)
+    setPrescriptionsError('')
+
+    try {
+      await api.delete(
+        `/patients/${patient.id}/prescriptions/${prescriptionId}`
+      )
+
+      setPrescriptions((current) => ({
+        ...current,
+        [patient.id]: (current[patient.id] || []).filter(
+          (item) => item.id !== prescriptionId
+        ),
+      }))
+    } catch (error) {
+      setPrescriptionsError(
+        error.message || 'Failed to delete prescription'
+      )
+    } finally {
+      setPrescriptionsLoading(false)
+    }
   }
 
   // Save Lab Request
