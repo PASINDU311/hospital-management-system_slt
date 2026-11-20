@@ -15,11 +15,17 @@ async function apiRequest(endpoint, options = {}) {
     throw new Error(errorMessage || `API Error: ${response.status}`);
   }
 
-  if (response.status === 204) {
-    return null;
-  }
+    if (response.status === 204) {
+        return null;
+    }
 
-  return response.json();
+    const responseText = await response.text();
+
+    if (!responseText) {
+        return null;
+    }
+
+    return JSON.parse(responseText);
 }
 
 export const api = {

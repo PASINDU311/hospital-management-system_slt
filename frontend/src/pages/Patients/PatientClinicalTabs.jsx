@@ -317,7 +317,7 @@ function PatientClinicalTabs({ patient }) {
       setPrescriptions((current) => ({
         ...current,
         [patient.id]: (current[patient.id] || []).filter(
-          (item) => item.id !== prescriptionId
+          (item) => String(item.id) !== String(prescriptionId)
         ),
       }))
     } catch (error) {
@@ -378,7 +378,7 @@ function PatientClinicalTabs({ patient }) {
       setLabRecords((current) => ({
         ...current,
         [patient.id]: (current[patient.id] || []).filter(
-          (item) => item.id !== labId
+          (item) => String(item.id) !== String(labId)
         ),
       }))
     } catch (error) {
