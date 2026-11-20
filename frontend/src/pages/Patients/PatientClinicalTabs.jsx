@@ -151,6 +151,45 @@ function PatientClinicalTabs({ patient }) {
     }
   }, [patient?.id])
   const [labRecords, setLabRecords] = useState({})
+  const [labLoading, setLabLoading] = useState(false)
+  const [labError, setLabError] = useState('')
+    useEffect(() => {
+    let isMounted = true
+
+    const loadLabRecords = async () => {
+      if (!patient?.id) return
+
+      setLabLoading(true)
+      setLabError('')
+
+      try {
+        const data = await api.get(
+          `/patients/${patient.id}/lab-tests`
+        )
+
+        if (isMounted) {
+          setLabRecords((prev) => ({
+            ...prev,
+            [patient.id]: data,
+          }))
+        }
+      } catch (error) {
+        if (isMounted) {
+          setLabError(error.message || 'Failed to load lab records')
+        }
+      } finally {
+        if (isMounted) {
+          setLabLoading(false)
+        }
+      }
+    }
+
+    loadLabRecords()
+
+    return () => {
+      isMounted = false
+    }
+  }, [patient?.id])
 
   const [formData, setFormData] = useState(initialDiagnosisForm)
   const [prescriptionData, setPrescriptionData] = useState(
@@ -291,38 +330,64 @@ function PatientClinicalTabs({ patient }) {
   }
 
   // Save Lab Request
-  function handleLabSubmit(event) {
+  async function handleLabSubmit(event) {
     event.preventDefault()
 
-    const newLabRecord = {
-      ...labData,
-      id: Date.now(),
+    setLabLoading(true)
+    setLabError('')
+
+    try {
+      const newLabRecord = await api.post(
+        `/patients/${patient.id}/lab-tests`,
+        labData
+      )
+
+      setLabRecords((current) => ({
+        ...current,
+        [patient.id]: [
+          newLabRecord,
+          ...(current[patient.id] || []),
+        ],
+      }))
+
+      setLabData(initialLabForm())
+      setShowLabForm(false)
+    } catch (error) {
+      setLabError(
+        error.message || 'Failed to save lab request'
+      )
+    } finally {
+      setLabLoading(false)
     }
-
-    setLabRecords((current) => ({
-      ...current,
-      [patient.id]: [
-        newLabRecord,
-        ...(current[patient.id] || []),
-      ],
-    }))
-
-    setLabData(initialLabForm())
-    setShowLabForm(false)
   }
 
   // Delete Lab Request
-  function handleDeleteLab(labId) {
+  async function handleDeleteLab(labId) {
     if (!window.confirm('Are you sure you want to delete this lab record?')) {
       return
     }
 
-    setLabRecords((current) => ({
-      ...current,
-      [patient.id]: (current[patient.id] || []).filter(
-        (item) => item.id !== labId
-      ),
-    }))
+    setLabLoading(true)
+    setLabError('')
+
+    try {
+      await api.delete(
+        `/patients/${patient.id}/lab-tests/${labId}`
+      )
+
+      setLabRecords((current) => ({
+        ...current,
+        [patient.id]: (current[patient.id] || []).filter(
+          (item) => item.id !== labId
+        ),
+      }))
+    } catch (error) {
+      setLabError(
+        error.message || 'Failed to delete lab record'
+      )
+    } finally {
+      setLabLoading(false)
+    }
   }
 
   // Save Treatment Timeline Record
