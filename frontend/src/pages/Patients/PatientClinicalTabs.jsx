@@ -234,6 +234,35 @@ function PatientClinicalTabs({ patient }) {
   const [billingRecords, setBillingRecords] = useState({})
   const [billingData, setBillingData] = useState(initialBillingForm)
 
+    useEffect(() => {
+    let isMounted = true
+
+    async function loadBillingRecords() {
+      if (!patient?.id) return
+
+      try {
+        const data = await api.get(
+          `/patients/${patient.id}/billing`
+        )
+
+        if (isMounted) {
+          setBillingRecords((current) => ({
+            ...current,
+            [patient.id]: data,
+          }))
+        }
+      } catch (error) {
+        console.error('Failed to load billing records:', error)
+      }
+    }
+
+    loadBillingRecords()
+
+    return () => {
+      isMounted = false
+    }
+  }, [patient?.id])
+
 
 
 
@@ -469,55 +498,57 @@ function PatientClinicalTabs({ patient }) {
     }
   }
 
-
     // Save Billing Record
-    function handleBillingSubmit(event) {
-    event.preventDefault()
+    async function handleBillingSubmit(event) {
+      event.preventDefault()
 
-    const total = Number(billingData.totalAmount)
-    const paid = Number(billingData.paidAmount)
+      try {
+        const newBillingRecord = await api.post(
+          `/patients/${patient.id}/billing`,
+          {
+            ...billingData,
+            totalAmount: Number(billingData.totalAmount),
+            paidAmount: Number(billingData.paidAmount),
+          }
+        )
 
-    if (paid > total) {
-        alert('Paid amount cannot exceed total amount.')
-        return
-    }
+        setBillingRecords((current) => ({
+          ...current,
+          [patient.id]: [
+            newBillingRecord,
+            ...(current[patient.id] || []),
+          ],
+        }))
 
-    const balance = total - paid
-
-    const newBillingRecord = {
-        ...billingData,
-        id: Date.now(),
-        totalAmount: total,
-        paidAmount: paid,
-        balance,
-        paymentStatus:
-        balance === 0 ? 'Paid' : paid > 0 ? 'Partially Paid' : 'Pending',
-    }
-
-    setBillingRecords((current) => ({
-        ...current,
-        [patient.id]: [
-        newBillingRecord,
-        ...(current[patient.id] || []),
-        ],
-    }))
-
-    setBillingData(initialBillingForm())
-    setShowBillingForm(false)
+        setBillingData(initialBillingForm())
+        setShowBillingForm(false)
+      } catch (error) {
+        console.error('Failed to save billing record:', error)
+        alert(error.message || 'Failed to save billing record.')
+      }
     }
 
     // Delete Billing Record
-    function handleDeleteBilling(recordId) {
-    if (!window.confirm('Are you sure you want to delete this billing record?')) {
+    async function handleDeleteBilling(recordId) {
+      if (!window.confirm('Are you sure you want to delete this billing record?')) {
         return
-    }
+      }
 
-    setBillingRecords((current) => ({
-        ...current,
-        [patient.id]: (current[patient.id] || []).filter(
-        (item) => item.id !== recordId
-        ),
-    }))
+      try {
+        await api.delete(
+          `/patients/${patient.id}/billing/${recordId}`
+        )
+
+        setBillingRecords((current) => ({
+          ...current,
+          [patient.id]: (current[patient.id] || []).filter(
+            (item) => String(item.id) !== String(recordId)
+          ),
+        }))
+      } catch (error) {
+        console.error('Failed to delete billing record:', error)
+        alert(error.message || 'Failed to delete billing record.')
+      }
     }
 
 
