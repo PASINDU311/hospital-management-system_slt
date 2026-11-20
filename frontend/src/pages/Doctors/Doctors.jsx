@@ -10,6 +10,7 @@ function Doctors() {
     const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
     const [isAppointmentBookingOpen, setIsAppointmentBookingOpen] = useState(false);
     const [isScheduleFormOpen, setIsScheduleFormOpen] = useState(false);
+    const [scheduleToEdit, setScheduleToEdit] = useState(null);
     const [registeredDoctors, setRegisteredDoctors] = useState([]);
     const [doctorSchedules, setDoctorSchedules] = useState([]);
     const [schedulesLoading, setSchedulesLoading] = useState(true);
@@ -204,6 +205,29 @@ function Doctors() {
         }
     };
 
+    const handleUpdateSchedule = async (scheduleData) => {
+        try {
+            const updatedSchedule = await api.put(
+                `/doctor-schedules/${scheduleToEdit.id}`,
+                scheduleData
+            );
+
+            setDoctorSchedules((previousSchedules) =>
+                previousSchedules.map((schedule) =>
+                    schedule.id === scheduleToEdit.id
+                        ? updatedSchedule
+                        : schedule
+                )
+            );
+
+            setIsScheduleFormOpen(false);
+            setScheduleToEdit(null);
+            alert('Doctor schedule updated successfully!');
+        } catch (error) {
+            throw new Error(error.message || 'Failed to update doctor schedule.');
+        }
+    };
+
 
     const handleDeleteSchedule = async (scheduleId) => {
         const confirmDelete = window.confirm(
@@ -332,9 +356,13 @@ function Doctors() {
 
         {isScheduleFormOpen && (
             <DoctorScheduleForm
-                onClose={() => setIsScheduleFormOpen(false)}
-                onSave={handleCreateSchedule}
+                onClose={() => {
+                    setIsScheduleFormOpen(false);
+                    setScheduleToEdit(null);
+                }}
+                onSave={scheduleToEdit ? handleUpdateSchedule : handleCreateSchedule}
                 doctors={registeredDoctors}
+                scheduleToEdit={scheduleToEdit}
             />
         )}
 
@@ -497,6 +525,20 @@ function Doctors() {
                                 </td>
                                 <td>{schedule.room || '-'}</td>
                                 <td>{schedule.status}</td>
+
+                                <td>
+                                    <button
+                                        type="button"
+                                        className="doctor-edit-btn"
+                                        onClick={() => {
+                                            setScheduleToEdit(schedule);
+                                            setIsScheduleFormOpen(true);
+                                        }}
+                                    >
+                                        <span className="material-symbols-outlined">edit</span>
+                                        Edit
+                                    </button>
+                                </td>
 
                                 <td>
                                     <button

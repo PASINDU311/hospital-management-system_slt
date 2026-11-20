@@ -95,6 +95,64 @@ public class DoctorScheduleService {
         return scheduleRepository.save(schedule);
     }
 
+    public DoctorSchedule updateSchedule(
+            Long scheduleId,
+            Long doctorId,
+            LocalDate scheduleDate,
+            LocalTime startTime,
+            LocalTime endTime,
+            String activity,
+            String room,
+            String status) {
+
+        DoctorSchedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() ->
+                        new RuntimeException("Schedule not found: " + scheduleId));
+
+        if (startTime == null || endTime == null
+                || !startTime.isBefore(endTime)) {
+            throw new IllegalArgumentException(
+                    "End time must be after start time");
+        }
+
+        if (scheduleDate == null || scheduleDate.isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException(
+                    "Schedule date cannot be in the past");
+        }
+
+        Doctor doctor = doctorRepository.findById(doctorId)
+                .orElseThrow(() ->
+                        new RuntimeException("Doctor not found: " + doctorId));
+
+        List<DoctorSchedule> existingSchedules =
+                scheduleRepository
+                        .findByDoctorIdAndScheduleDateOrderByStartTimeAsc(
+                                doctorId, scheduleDate);
+
+        for (DoctorSchedule existing : existingSchedules) {
+            if (!existing.getId().equals(scheduleId)) {
+                boolean overlaps = startTime.isBefore(existing.getEndTime())
+                        && endTime.isAfter(existing.getStartTime());
+
+                if (overlaps) {
+                    throw new IllegalArgumentException(
+                            "Doctor already has a schedule during this time");
+                }
+            }
+        }
+
+        schedule.setDoctor(doctor);
+        schedule.setScheduleDate(scheduleDate);
+        schedule.setStartTime(startTime);
+        schedule.setEndTime(endTime);
+        schedule.setActivity(activity);
+        schedule.setRoom(room);
+        schedule.setStatus(
+                status == null || status.isBlank() ? "Available" : status);
+
+        return scheduleRepository.save(schedule);
+    }
+
     public void deleteSchedule(Long scheduleId) {
         if (!scheduleRepository.existsById(scheduleId)) {
             throw new RuntimeException(

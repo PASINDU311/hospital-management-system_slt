@@ -73,6 +73,34 @@ public class DoctorScheduleController {
         }
     }
 
+
+    @PutMapping("/{scheduleId}")
+    public ResponseEntity<?> updateSchedule(
+            @PathVariable Long scheduleId,
+            @RequestBody ScheduleRequest request) {
+
+        try {
+            DoctorSchedule updatedSchedule = scheduleService.updateSchedule(
+                    scheduleId,
+                    request.getDoctorId(),
+                    request.getScheduleDate(),
+                    request.getStartTime(),
+                    request.getEndTime(),
+                    request.getActivity(),
+                    request.getRoom(),
+                    request.getStatus()
+            );
+
+            return ResponseEntity.ok(updatedSchedule);
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(
+                    java.util.Map.of("message", e.getMessage())
+            );
+        }
+    }
+
+
     @DeleteMapping("/{scheduleId}")
     public ResponseEntity<Void> deleteSchedule(
             @PathVariable Long scheduleId) {

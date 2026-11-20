@@ -1,7 +1,7 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-function DoctorScheduleForm({ onClose, onSave, doctors }) {
+function DoctorScheduleForm({ onClose, onSave, doctors, scheduleToEdit }) {
     const [formData, setFormData] = useState({
         doctorId: '',
         scheduleDate: '',
@@ -11,6 +11,20 @@ function DoctorScheduleForm({ onClose, onSave, doctors }) {
         room: '',
         status: 'Available'
     });
+
+    useEffect(() => {
+        if (scheduleToEdit) {
+            setFormData({
+                doctorId: String(scheduleToEdit.doctor?.id || ''),
+                scheduleDate: scheduleToEdit.scheduleDate || '',
+                startTime: scheduleToEdit.startTime?.slice(0, 5) || '',
+                endTime: scheduleToEdit.endTime?.slice(0, 5) || '',
+                activity: scheduleToEdit.activity || '',
+                room: scheduleToEdit.room || '',
+                status: scheduleToEdit.status || 'Available'
+            });
+        }
+    }, [scheduleToEdit]);
 
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -56,7 +70,7 @@ function DoctorScheduleForm({ onClose, onSave, doctors }) {
             <div className="schedule-modal">
                 <div className="schedule-modal-header">
                     <div>
-                        <h2>New Doctor Schedule</h2>
+                        <h2>{scheduleToEdit ? 'Edit Doctor Schedule' : 'New Doctor Schedule'}</h2>
                         <p>Create a doctor availability schedule</p>
                     </div>
 
@@ -188,7 +202,11 @@ function DoctorScheduleForm({ onClose, onSave, doctors }) {
                             className="schedule-save-btn"
                             disabled={loading}
                         >
-                            {loading ? 'Saving...' : 'Create Schedule'}
+                            {loading
+                                ? 'Saving...'
+                                : scheduleToEdit
+                                    ? 'Update Schedule'
+                                    : 'Create Schedule'}
                         </button>
                     </div>
                 </form>
