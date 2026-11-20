@@ -1417,3 +1417,213 @@
     margin-left: auto;
   }
 }
+
+
+/* Doctor Schedule Empty State */
+.schedule-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 260px;
+    padding: 35px 20px;
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 14px;
+    margin: 16px 0;
+}
+
+.schedule-empty-icon {
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e0f2f1;
+    color: #008b83;
+    border-radius: 18px;
+    margin-bottom: 16px;
+}
+
+.schedule-empty-icon .material-symbols-outlined {
+    font-size: 34px;
+}
+
+.schedule-empty-state h3 {
+    color: #173b5e;
+    font-size: 19px;
+    font-weight: 700;
+    margin: 0 0 8px;
+}
+
+.schedule-empty-state p {
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.6;
+    max-width: 360px;
+    margin: 0;
+}
+
+
+/* Doctor Schedule Modal */
+.schedule-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(15, 35, 55, 0.55);
+    backdrop-filter: blur(4px);
+}
+
+.schedule-modal {
+    width: 100%;
+    max-width: 540px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.schedule-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 24px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.schedule-modal-header h2 {
+    margin: 0 0 7px;
+    color: #173b5e;
+    font-size: 21px;
+}
+
+.schedule-modal-header p {
+    margin: 0;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.schedule-modal-close {
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 9px;
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 25px;
+    cursor: pointer;
+}
+
+.schedule-form-body {
+    display: flex;
+    flex-direction: column;
+    gap: 17px;
+    padding: 24px;
+}
+
+.schedule-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+}
+
+.schedule-form-field label {
+    color: #334155;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.schedule-form-field input,
+.schedule-form-field select {
+    width: 100%;
+    min-height: 43px;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+    background: #ffffff;
+    color: #334155;
+    font-size: 13px;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.schedule-form-field input:focus,
+.schedule-form-field select:focus {
+    border-color: #008b83;
+    box-shadow: 0 0 0 3px rgba(0, 139, 131, 0.1);
+}
+
+.schedule-form-row {
+    display: flex;
+    gap: 14px;
+}
+
+.schedule-form-error {
+    margin: 0;
+    padding: 11px;
+    border-radius: 8px;
+    background: #fef2f2;
+    color: #dc2626;
+    font-size: 13px;
+}
+
+.schedule-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 18px 24px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.schedule-modal-actions button {
+    min-height: 42px;
+    padding: 0 20px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.schedule-cancel-btn {
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    color: #475569;
+}
+
+.schedule-save-btn {
+    border: none;
+    background: #008b83;
+    color: #ffffff;
+}
+
+.schedule-save-btn:hover {
+    background: #00736d;
+}
+
+.schedule-modal-actions button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+    .schedule-modal-overlay {
+        padding: 12px;
+    }
+
+    .schedule-form-row {
+        flex-direction: column;
+    }
+
+    .schedule-modal-header,
+    .schedule-form-body {
+        padding: 18px;
+    }
+}

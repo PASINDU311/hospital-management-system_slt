@@ -4,11 +4,16 @@ import { api } from '../../services/api';
 import './Doctors.css';
 import DoctorRegistration from '../../components/doctors/DoctorRegistration';
 import AppointmentBooking from '../../components/doctors/AppointmentBooking';
+import DoctorScheduleForm from '../../components/doctors/DoctorScheduleForm';
 
 function Doctors() {
     const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
     const [isAppointmentBookingOpen, setIsAppointmentBookingOpen] = useState(false);
+    const [isScheduleFormOpen, setIsScheduleFormOpen] = useState(false);
     const [registeredDoctors, setRegisteredDoctors] = useState([]);
+    const [doctorSchedules, setDoctorSchedules] = useState([]);
+    const [schedulesLoading, setSchedulesLoading] = useState(true);
+    const [schedulesError, setSchedulesError] = useState('');
     const [doctorToEdit, setDoctorToEdit] = useState(null);
     const [doctorsLoading, setDoctorsLoading] = useState(true);
     const [doctorsError, setDoctorsError] = useState('');
@@ -41,6 +46,26 @@ function Doctors() {
             isMounted = false;
         };
     }, []);
+
+
+    useEffect(() => {
+        const fetchDoctorSchedules = async () => {
+            try {
+                const data = await api.get('/doctor-schedules');
+                setDoctorSchedules(data);
+                setSchedulesError('');
+            } catch (error) {
+                setSchedulesError(
+                    error.message || 'Failed to load doctor schedules.'
+                );
+            } finally {
+                setSchedulesLoading(false);
+            }
+        };
+
+        fetchDoctorSchedules();
+    }, []);
+
 
     useEffect(() => {
         const fetchAppointments = async () => {
@@ -157,6 +182,55 @@ function Doctors() {
         }
     };
 
+
+    const handleCreateSchedule = async (scheduleData) => {
+        try {
+            const savedSchedule = await api.post(
+                '/doctor-schedules',
+                scheduleData
+            );
+
+            setDoctorSchedules((previousSchedules) => [
+                ...previousSchedules,
+                savedSchedule
+            ]);
+
+            setIsScheduleFormOpen(false);
+            alert('Doctor schedule created successfully!');
+        } catch (error) {
+            throw new Error(
+                error.message || 'Failed to create doctor schedule.'
+            );
+        }
+    };
+
+
+    const handleDeleteSchedule = async (scheduleId) => {
+        const confirmDelete = window.confirm(
+            'Are you sure you want to delete this doctor schedule?'
+        );
+
+        if (!confirmDelete) {
+            return;
+        }
+
+        try {
+            await api.delete(`/doctor-schedules/${scheduleId}`);
+
+            setDoctorSchedules((previousSchedules) =>
+                previousSchedules.filter(
+                    (schedule) => schedule.id !== scheduleId
+                )
+            );
+
+            alert('Doctor schedule deleted successfully!');
+        } catch (error) {
+            alert(error.message || 'Failed to delete doctor schedule.');
+        }
+    };
+
+
+
   const summaryCards = [
     {
       title: 'Active Doctors',
@@ -255,6 +329,16 @@ function Doctors() {
             />
         )}
 
+
+        {isScheduleFormOpen && (
+            <DoctorScheduleForm
+                onClose={() => setIsScheduleFormOpen(false)}
+                onSave={handleCreateSchedule}
+                doctors={registeredDoctors}
+            />
+        )}
+
+
       {/* Schedule Navigation */}
       <section className="schedule-navigation">
 
@@ -299,10 +383,14 @@ function Doctors() {
 
           <button className="today-btn">Today</button>
 
-          <button className="new-schedule-btn">
-            <span className="material-symbols-outlined">event_note</span>
-            New Doctor Schedule
-          </button>
+            <button
+                type="button"
+                className="new-schedule-btn"
+                onClick={() => setIsScheduleFormOpen(true)}
+            >
+                <span className="material-symbols-outlined">event_note</span>
+                New Doctor Schedule
+            </button>
 
           <button
             type="button"
@@ -346,74 +434,89 @@ function Doctors() {
           </div>
         </div>
 
+        
         <div className="schedule-matrix-scroll">
-          <table className="schedule-matrix-table">
-            <thead>
-              <tr>
-                <th>Specialist & Unit</th>
-                <th>MON 09</th>
-                <th>TUE 10</th>
-                <th>WED 11</th>
-                <th>THU 12</th>
-                <th>FRI 13</th>
-              </tr>
-            </thead>
+            {schedulesLoading ? (
+                <p>Loading doctor schedules...</p>
+            ) : schedulesError ? (
+                <p>{schedulesError}</p>
+            ) : doctorSchedules.length === 0 ? (
+                
+                <div className="schedule-empty-state">
+                    <div className="schedule-empty-icon">
+                        <span className="material-symbols-outlined">
+                            calendar_month
+                        </span>
+                    </div>
 
-            <tbody>
-              <tr>
-                <td>
-                  <strong>Dr. Donald Vance</strong>
-                  <small>Cardiology · Suite 302</small>
-                  <small>08:00 – 16:00</small>
-                </td>
-                <td><div className="matrix-event confirmed">ECG Consultation<small>09:00 – 10:30</small></div></td>
-                <td><div className="matrix-event confirmed">Cardiac Clinic<small>10:00 – 12:00</small></div></td>
-                <td><div className="matrix-event progress">Cath Lab OR 2<small>08:30 – 13:00</small></div></td>
-                <td><div className="matrix-event confirmed">Cardio Echo Clinic<small>09:00 – 11:00</small></div></td>
-                <td><div className="matrix-event confirmed">Outpatient Clinic<small>13:00 – 17:00</small></div></td>
-              </tr>
+                    <h3>No Doctor Schedules Yet</h3>
 
-              <tr>
-                <td>
-                  <strong>Dr. Elena Thorne</strong>
-                  <small>Neurology · Suite 410</small>
-                  <small>09:00 – 17:00</small>
-                </td>
-                <td><div className="matrix-event confirmed">EEG Diagnostic<small>09:00 – 11:30</small></div></td>
-                <td><div className="matrix-event confirmed">Stroke Clinic<small>10:00 – 14:00</small></div></td>
-                <td><div className="matrix-event confirmed">Neuro Rounds<small>10:00 – 11:00</small></div></td>
-                <td><div className="matrix-event available">Academic Rounds</div></td>
-                <td><div className="matrix-event confirmed">Outpatient Follow-ups<small>13:00 – 17:00</small></div></td>
-              </tr>
+                    <p>
+                        There are currently no schedules available.
+                        Create a new doctor schedule to get started.
+                    </p>
+                </div>
 
-              <tr>
-                <td>
-                  <strong>Dr. Sarah Jenkins</strong>
-                  <small>General Surgery · OR Block A</small>
-                  <small>07:30 – 15:30</small>
-                </td>
-                <td><div className="matrix-event surgery">Laparoscopy OR 1<small>08:00 – 12:00</small></div></td>
-                <td><div className="matrix-event surgery">Post-Op Wound Review<small>11:00 – 15:00</small></div></td>
-                <td><div className="matrix-event surgery">Cholecystectomy OR 4<small>09:30 – 13:00</small></div></td>
-                <td><div className="matrix-event confirmed">Surgical Consults<small>09:00 – 12:00</small></div></td>
-                <td><div className="matrix-event surgery">Hernia Repair Batch<small>08:00 – 12:30</small></div></td>
-              </tr>
+            ) : (
+                <table className="schedule-matrix-table">
+                    <thead>
+                        <tr>
+                            <th>Doctor</th>
+                            <th>Department</th>
+                            <th>Date</th>
+                            <th>Activity</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Room</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
 
-              <tr>
-                <td>
-                  <strong>Dr. Mateo Ramos</strong>
-                  <small>Pediatrics · Wing B</small>
-                  <small>08:00 – 16:00</small>
-                </td>
-                <td><div className="matrix-event confirmed">Well-Baby Screening<small>09:00 – 12:00</small></div></td>
-                <td><div className="matrix-event confirmed">Immunization Center<small>10:00 – 15:00</small></div></td>
-                <td><div className="matrix-event confirmed">Pediatric Clinic<small>09:00 – 12:00</small></div></td>
-                <td><div className="matrix-event confirmed">Developmental Check<small>09:00 – 13:00</small></div></td>
-                <td><div className="matrix-event confirmed">Peds Consultation<small>11:00 – 16:00</small></div></td>
-              </tr>
-            </tbody>
-          </table>
+                    <tbody>
+                        {doctorSchedules.map((schedule) => (
+                            <tr key={schedule.id}>
+                                <td>
+                                    Dr. {schedule.doctor?.firstName}{' '}
+                                    {schedule.doctor?.lastName}
+                                </td>
+                                <td>{schedule.doctor?.department}</td>
+                                <td>{schedule.scheduleDate}</td>
+                                <td>{schedule.activity}</td>
+                                <td>
+                                    {new Date(`2000-01-01T${schedule.startTime}`).toLocaleTimeString(
+                                        'en-US',
+                                        { hour: '2-digit', minute: '2-digit' }
+                                    )}
+                                </td>
+
+                                <td>
+                                    {new Date(`2000-01-01T${schedule.endTime}`).toLocaleTimeString(
+                                        'en-US',
+                                        { hour: '2-digit', minute: '2-digit' }
+                                    )}
+                                </td>
+                                <td>{schedule.room || '-'}</td>
+                                <td>{schedule.status}</td>
+
+                                <td>
+                                    <button
+                                        type="button"
+                                        className="doctor-delete-btn"
+                                        onClick={() => handleDeleteSchedule(schedule.id)}
+                                    >
+                                        <span className="material-symbols-outlined">
+                                            delete
+                                        </span>
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            )}
         </div>
+
 
         <div className="schedule-matrix-footer">
           <span>Showing 4 of 42 specialists</span>
@@ -575,6 +678,7 @@ function Doctors() {
                 <th>Visit Type</th>
                 <th>Cabin / Room</th>
                 <th>Status</th>
+                <th>Action</th>
               </tr>
             </thead>
 
