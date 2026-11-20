@@ -41,6 +41,19 @@ function Doctors() {
             isMounted = false;
         };
     }, []);
+
+    useEffect(() => {
+        const fetchAppointments = async () => {
+            try {
+                const data = await api.get('/appointments');
+                setAppointments(data);
+            } catch (error) {
+                console.error('Failed to load appointments:', error);
+            }
+        };
+
+        fetchAppointments();
+    }, []);
     const handleRegisterDoctor = async (doctorData) => {
         try {
             const newDoctor = await api.post('/doctors', doctorData);
@@ -100,63 +113,7 @@ function Doctors() {
         }
     };
 
-    const [appointments, setAppointments] = useState([
-        {
-            id: 1,
-            time: '10:15 AM',
-            patientName: 'Marcus Henderson',
-            patientMrn: 'MRN-90241-CA',
-            doctor: 'Dr. Donald Vance',
-            department: 'Cardiology',
-            visitType: 'Urgent Triage',
-            room: 'Cabin 302',
-            status: 'In Progress',
-        },
-        {
-            id: 2,
-            time: '10:30 AM',
-            patientName: "Liam O'Connor",
-            patientMrn: 'MRN-88410-PD',
-            doctor: 'Dr. Mateo Ramos',
-            department: 'Pediatrics',
-            visitType: 'First Visit',
-            room: 'Peds Wing B-1',
-            status: 'Confirmed',
-        },
-        {
-            id: 3,
-            time: '11:00 AM',
-            patientName: 'Charlotte Lin',
-            patientMrn: 'MRN-77319-NE',
-            doctor: 'Dr. Elena Thorne',
-            department: 'Neurology',
-            visitType: 'Routine Follow-up',
-            room: 'Cabin 410',
-            status: 'Scheduled',
-        },
-        {
-            id: 4,
-            time: '11:30 AM',
-            patientName: 'Arthur Pendleton',
-            patientMrn: 'MRN-44912-GS',
-            doctor: 'Dr. Sarah Jenkins',
-            department: 'General Surgery',
-            visitType: 'Post-Op Check',
-            room: 'Recovery Ste 2',
-            status: 'Confirmed',
-        },
-        {
-            id: 5,
-            time: '09:00 AM',
-            patientName: 'Annette Becker',
-            patientMrn: 'MRN-33109-CA',
-            doctor: 'Dr. Donald Vance',
-            department: 'Cardiology',
-            visitType: 'Routine Follow-up',
-            room: 'Cabin 302',
-            status: 'Completed',
-        },
-    ]);
+    const [appointments, setAppointments] = useState([]);
     const [appointmentStatusFilter, setAppointmentStatusFilter] = useState('All Statuses');
     const [currentPage, setCurrentPage] = useState(1);
 
@@ -181,28 +138,23 @@ function Doctors() {
         startIndex + appointmentsPerPage
     );
 
-    const handleBookAppointment = (appointmentData) => {
-        console.log('Appointment submitted:', appointmentData);
+    const handleBookAppointment = async (appointmentData) => {
+        try {
+            const savedAppointment = await api.post(
+                '/appointments',
+                appointmentData
+            );
 
-        const newAppointment = {
-            ...appointmentData,
-            id: Date.now(),
-            status: 'Confirmed',
-            room: 'Not Assigned',
-        };
-
-        setAppointments((previousAppointments) => {
-            const updatedAppointments = [
+            setAppointments((previousAppointments) => [
                 ...previousAppointments,
-                newAppointment,
-            ];
+                savedAppointment,
+            ]);
 
-            console.log('Updated appointments:', updatedAppointments);
-
-            return updatedAppointments;
-        });
-
-        setIsAppointmentBookingOpen(false);
+            setIsAppointmentBookingOpen(false);
+            alert('Appointment booked successfully!');
+        } catch (error) {
+            alert(error.message || 'Failed to book appointment.');
+        }
     };
 
   const summaryCards = [
@@ -299,6 +251,7 @@ function Doctors() {
             <AppointmentBooking
                 onClose={() => setIsAppointmentBookingOpen(false)}
                 onSave={handleBookAppointment}
+                doctors={registeredDoctors}
             />
         )}
 
@@ -628,14 +581,16 @@ function Doctors() {
             <tbody>
               {currentAppointments.map((appointment) => (
                 <tr key={appointment.id}>
-                    <td>{appointment.time}</td>
+                    <td>{appointment.appointmentTime}</td>
                     <td>
-                        <strong>{appointment.patientName}</strong>
-                        <small>{appointment.patientMrn}</small>
+                        <strong>{appointment.patient?.name}</strong>
+                        <small>{appointment.patient?.medicalRecordNumber}</small>
                     </td>
                     <td>
-                        <strong>{appointment.doctor}</strong>
-                        <small>{appointment.department}</small>
+                        <strong>
+                            Dr. {appointment.doctor?.firstName} {appointment.doctor?.lastName}
+                        </strong>
+                        <small>{appointment.doctor?.department}</small>
                     </td>
                     <td>
                         <span className="visit-type routine">

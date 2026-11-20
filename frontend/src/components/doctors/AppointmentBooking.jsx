@@ -2,12 +2,12 @@
 import React, { useState } from 'react';
 import './AppointmentBooking.css';
 
-function AppointmentBooking({ onClose, onSave }) {
+function AppointmentBooking({ onClose, onSave, doctors = [] }) {
   const [formData, setFormData] = useState({
     patientName: '',
     patientMrn: '',
     department: '',
-    doctor: '',
+    doctorId: '',
     date: '',
     time: '',
     visitType: 'First Visit',
@@ -24,11 +24,41 @@ function AppointmentBooking({ onClose, onSave }) {
     }));
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
+    const handleSubmit = (event) => {
+        event.preventDefault();
 
-    onSave(formData);
-  };
+        const appointmentData = {
+            patientMrn: formData.patientMrn,
+            doctorId: Number(formData.doctorId),
+            appointmentDate: formData.date,
+            appointmentTime: convertTo24Hour(formData.time),
+            visitType: formData.visitType,
+            priority: formData.priority,
+            symptoms: formData.symptoms,
+        };
+
+        console.log(
+            'Appointment data being sent:',
+            JSON.stringify(appointmentData, null, 2)
+        );
+
+        onSave(appointmentData);
+     };
+
+        const convertTo24Hour = (time) => {
+        const [timePart, modifier] = time.split(' ');
+        let [hours, minutes] = timePart.split(':');
+
+        if (modifier === 'PM' && hours !== '12') {
+            hours = String(Number(hours) + 12);
+        }
+
+        if (modifier === 'AM' && hours === '12') {
+            hours = '00';
+        }
+
+        return `${hours.padStart(2, '0')}:${minutes}:00`;
+    };
 
   return (
     <div className="appointment-modal-overlay">
@@ -100,17 +130,19 @@ function AppointmentBooking({ onClose, onSave }) {
               <div className="appointment-form-field">
                 <label htmlFor="doctor">Doctor *</label>
                 <select
-                  id="doctor"
-                  name="doctor"
-                  value={formData.doctor}
-                  onChange={handleChange}
-                  required
+                    id="doctor"
+                    name="doctorId"
+                    value={formData.doctorId}
+                    onChange={handleChange}
+                    required
                 >
-                  <option value="">Select Doctor</option>
-                  <option value="Dr. Donald Vance">Dr. Donald Vance</option>
-                  <option value="Dr. Elena Thorne">Dr. Elena Thorne</option>
-                  <option value="Dr. Sarah Jenkins">Dr. Sarah Jenkins</option>
-                  <option value="Dr. Mateo Ramos">Dr. Mateo Ramos</option>
+                    <option value="">Select Doctor</option>
+
+                    {doctors.map((doctor) => (
+                    <option key={doctor.id} value={doctor.id}>
+                        Dr. {doctor.firstName} {doctor.lastName}
+                    </option>
+                    ))}
                 </select>
               </div>
 
