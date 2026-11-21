@@ -1629,15 +1629,25 @@
 }
 
 /* Day Schedule Controls */
+/* Day Schedule Controls */
 .day-schedule-controls {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 14px;
-    padding: 16px 20px;
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
+    min-height: 76px;
+    padding: 14px 20px;
     margin-bottom: 16px;
+    background: linear-gradient(135deg, #ffffff, #f8fffe);
+    border: 1px solid #dce9ed;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(18, 59, 93, 0.04);
+}
+
+.day-schedule-controls input[type="date"],
+.day-schedule-controls select {
+    min-height: 42px;
+    box-sizing: border-box;
 }
 
 .day-schedule-controls label {
@@ -1829,4 +1839,36 @@
 .schedule-status.status-confirmed {
     background: #dbeafe;
     color: #1d4ed8;
+}
+
+/* Department Filter Dropdown */
+.department-filter-select {
+    min-width: 190px;
+    padding: 10px 38px 10px 14px;
+    border: 1px solid #d5e1ec;
+    border-radius: 10px;
+    background-color: #ffffff;
+    color: #173b5e;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(20, 50, 80, 0.05);
+}
+
+.department-filter-select:hover {
+    border-color: #0d9488;
+    background-color: #f8fffe;
+}
+
+.department-filter-select:focus {
+    border-color: #0d9488;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.14);
+}
+
+.department-filter-select option {
+    padding: 10px;
+    background-color: #ffffff;
+    color: #173b5e;
 }

@@ -595,6 +595,7 @@ function Doctors() {
 
                 <select
                     id="schedule-department"
+                    className="department-filter-select"
                     value={selectedDepartment}
                     onChange={(event) => setSelectedDepartment(event.target.value)}
                 >
@@ -960,7 +961,7 @@ function Doctors() {
             <button
                 type="button"
                 className="queue-refresh-btn"
-                onClick={() => setAppointments((currentAppointments) => [...currentAppointments])}
+                onClick={handleRefreshAppointments}
                 title="Refresh appointment queue"
             >
               <span className="material-symbols-outlined">refresh</span>
