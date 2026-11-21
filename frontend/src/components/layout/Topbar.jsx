@@ -28,7 +28,14 @@ function Topbar({ activePage }) {
       </div>
 
       <div className="top-actions">
-        <span className="date-label">Friday, 13 November 2026</span>
+        <span className="date-label">
+          {new Date().toLocaleDateString('en-GB', {
+            weekday: 'long',
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric',
+          })}
+        </span>
         <button type="button" className="icon-button" aria-label="Notifications">
           <span className="material-symbols-outlined">notifications</span>
           <i>3</i>

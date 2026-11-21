@@ -1627,3 +1627,206 @@
         padding: 18px;
     }
 }
+
+/* Day Schedule Controls */
+.day-schedule-controls {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    margin-bottom: 16px;
+}
+
+.day-schedule-controls label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #334155;
+}
+
+.day-schedule-controls input[type="date"] {
+    padding: 9px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #334155;
+    background: #f8fafc;
+    outline: none;
+}
+
+.day-schedule-controls input[type="date"]:focus {
+    border-color: #0d9488;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.12);
+}
+
+.day-schedule-controls span {
+    margin-left: auto;
+    padding: 7px 13px;
+    background: #ccfbf1;
+    color: #0f766e;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+@media (max-width: 600px) {
+    .day-schedule-controls {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .day-schedule-controls span {
+        margin-left: 0;
+    }
+}
+
+/* Weekly Calendar Grid */
+
+.weekly-calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(180px, 1fr));
+    gap: 12px;
+    min-width: 1260px;
+    padding: 16px 0;
+}
+
+.weekly-calendar-day {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    min-height: 250px;
+    overflow: hidden;
+}
+
+.weekly-calendar-day-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px;
+    background: #f1f5f9;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.weekly-calendar-day-header strong {
+    color: #334155;
+    font-size: 14px;
+}
+
+.weekly-calendar-day-header span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #0d9488;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.weekly-calendar-day-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+}
+
+.weekly-calendar-empty {
+    color: #94a3b8;
+    font-size: 12px;
+    text-align: center;
+    padding: 20px 0;
+}
+
+.weekly-schedule-card {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    padding: 12px;
+    background: #f0fdfa;
+    border-left: 4px solid #0d9488;
+    border-radius: 8px;
+    font-size: 12px;
+    color: #475569;
+}
+
+.weekly-schedule-card strong {
+    color: #0f172a;
+    font-size: 13px;
+}
+
+.weekly-schedule-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 5px;
+}
+
+.weekly-schedule-actions button {
+    padding: 5px 9px;
+    font-size: 11px;
+}
+
+@media (max-width: 768px) {
+    .weekly-calendar-grid {
+        grid-template-columns: repeat(7, minmax(160px, 1fr));
+    }
+}
+
+/* Highlight Today's Calendar Column */
+
+.weekly-calendar-day.today-highlight {
+    border: 2px solid #0d9488;
+    background: #f0fdfa;
+    box-shadow: 0 4px 12px rgba(13, 148, 136, 0.12);
+}
+
+.weekly-calendar-day.today-highlight .weekly-calendar-day-header {
+    background: #ccfbf1;
+}
+
+.weekly-calendar-day.today-highlight .weekly-calendar-day-header strong {
+    color: #0f766e;
+}
+
+.weekly-calendar-day.today-highlight .weekly-calendar-day-header span {
+    background: #0f766e;
+    color: #ffffff;
+}
+
+/* Schedule Status Colors */
+
+.schedule-status {
+    display: inline-block;
+    width: fit-content;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.schedule-status.status-available {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.schedule-status.status-busy {
+    background: #ffedd5;
+    color: #c2410c;
+}
+
+.schedule-status.status-cancelled {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.schedule-status.status-unavailable {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.schedule-status.status-confirmed {
+    background: #dbeafe;
+    color: #1d4ed8;
+}

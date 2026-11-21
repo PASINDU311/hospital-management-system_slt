@@ -11,13 +11,82 @@ function Doctors() {
     const [isAppointmentBookingOpen, setIsAppointmentBookingOpen] = useState(false);
     const [isScheduleFormOpen, setIsScheduleFormOpen] = useState(false);
     const [scheduleToEdit, setScheduleToEdit] = useState(null);
+    const [activeScheduleView, setActiveScheduleView] = useState('weekly');
+        const [currentWeekStart, setCurrentWeekStart] = useState(() => {
+        const today = new Date();
+        const day = today.getDay();
+        const monday = new Date(today);
+        monday.setDate(today.getDate() - (day === 0 ? 6 : day - 1));
+        monday.setHours(0, 0, 0, 0);
+        return monday;
+    });
+    const [selectedScheduleDate, setSelectedScheduleDate] = useState(
+        new Date().toLocaleDateString('en-CA')
+    );
+    const [selectedDepartment, setSelectedDepartment] = useState('All');
+    
+
     const [registeredDoctors, setRegisteredDoctors] = useState([]);
     const [doctorSchedules, setDoctorSchedules] = useState([]);
     const [schedulesLoading, setSchedulesLoading] = useState(true);
     const [schedulesError, setSchedulesError] = useState('');
+    const daySchedules = doctorSchedules.filter(
+        (schedule) => schedule.scheduleDate === selectedScheduleDate
+    );
     const [doctorToEdit, setDoctorToEdit] = useState(null);
     const [doctorsLoading, setDoctorsLoading] = useState(true);
     const [doctorsError, setDoctorsError] = useState('');
+
+    const departmentSchedules = doctorSchedules.filter((schedule) => {
+        if (selectedDepartment === 'All') {
+            return true;
+        }
+
+        return schedule.doctor?.department === selectedDepartment;
+    });
+
+    const weekEnd = new Date(currentWeekStart);
+    weekEnd.setDate(currentWeekStart.getDate() + 6);
+
+    const weeklySchedules = doctorSchedules.filter((schedule) => {
+        const scheduleDate = new Date(`${schedule.scheduleDate}T00:00:00`);
+
+        return (
+            scheduleDate >= currentWeekStart &&
+            scheduleDate <= weekEnd
+        );
+    });
+
+    const weekLabel = `${currentWeekStart.toLocaleDateString('en-US', {
+        month: 'short',
+        day: '2-digit'
+    })} – ${weekEnd.toLocaleDateString('en-US', {
+        month: 'short',
+        day: '2-digit',
+        year: 'numeric'
+    })}`;
+
+    const weekDays = Array.from({ length: 7 }, (_, index) => {
+        const date = new Date(currentWeekStart);
+        date.setDate(currentWeekStart.getDate() + index);
+
+        const dateKey = [
+            date.getFullYear(),
+            String(date.getMonth() + 1).padStart(2, '0'),
+            String(date.getDate()).padStart(2, '0')
+        ].join('-');
+
+        return {
+            dateKey,
+            dayName: date.toLocaleDateString('en-US', {
+                weekday: 'short'
+            }),
+            dayNumber: date.getDate(),
+            schedules: weeklySchedules.filter(
+                (schedule) => schedule.scheduleDate === dateKey
+            )
+        };
+    });
 
     useEffect(() => {
         let isMounted = true;
@@ -163,6 +232,17 @@ function Doctors() {
         startIndex,
         startIndex + appointmentsPerPage
     );
+
+    const handleRefreshAppointments = async () => {
+        try {
+            const data = await api.get('/appointments');
+            setAppointments(data);
+            setCurrentPage(1);
+            alert('Appointment queue refreshed successfully!');
+        } catch (error) {
+            alert(error.message || 'Failed to refresh appointments.');
+        }
+    };
 
     const handleBookAppointment = async (appointmentData) => {
         try {
@@ -371,45 +451,94 @@ function Doctors() {
       <section className="schedule-navigation">
 
         <div className="schedule-view-tabs">
-          <button className="schedule-tab active">
-            <span className="material-symbols-outlined">calendar_view_week</span>
-            Weekly Matrix
-          </button>
+            <button
+                type="button"
+                className={`schedule-tab ${activeScheduleView === 'weekly' ? 'active' : ''}`}
+                onClick={() => setActiveScheduleView('weekly')}
+            >
+                <span className="material-symbols-outlined">calendar_view_week</span>
+                Weekly Matrix
+            </button>
 
-          <button className="schedule-tab">
-            <span className="material-symbols-outlined">view_day</span>
-            Day Schedule
-          </button>
+            <button
+                type="button"
+                className={`schedule-tab ${activeScheduleView === 'day' ? 'active' : ''}`}
+                onClick={() => setActiveScheduleView('day')}
+            >
+                <span className="material-symbols-outlined">view_day</span>
+                Day Schedule
+            </button>
 
-          <button className="schedule-tab">
-            <span className="material-symbols-outlined">table_chart</span>
-            Roster Table
-          </button>
+            <button
+                type="button"
+                className={`schedule-tab ${activeScheduleView === 'roster' ? 'active' : ''}`}
+                onClick={() => setActiveScheduleView('roster')}
+            >
+                <span className="material-symbols-outlined">table_chart</span>
+                Roster Table
+            </button>
 
-          <button className="schedule-tab">
-            <span className="material-symbols-outlined">domain</span>
-            Department View
-          </button>
+            <button
+                type="button"
+                className={`schedule-tab ${activeScheduleView === 'department' ? 'active' : ''}`}
+                onClick={() => setActiveScheduleView('department')}
+            >
+                <span className="material-symbols-outlined">domain</span>
+                Department View
+            </button>
         </div>
 
         <div className="schedule-navigation-actions">
-          <button className="week-navigation-btn">
-            <span className="material-symbols-outlined">chevron_left</span>
-          </button>
+            <button
+                type="button"
+                className="week-navigation-btn"
+                onClick={() => {
+                    setCurrentWeekStart((previousWeek) => {
+                        const newWeek = new Date(previousWeek);
+                        newWeek.setDate(newWeek.getDate() - 7);
+                        return newWeek;
+                    });
+                }}
+            >
+                <span className="material-symbols-outlined">chevron_left</span>
+            </button>
 
           <div className="current-week">
             <span className="material-symbols-outlined">calendar_month</span>
             <span>
               Week of
-              <strong> Nov 09 – Nov 15, 2026</strong>
+              <strong>{weekLabel}</strong>
             </span>
           </div>
 
-          <button className="week-navigation-btn">
-            <span className="material-symbols-outlined">chevron_right</span>
-          </button>
+            <button
+                type="button"
+                className="week-navigation-btn"
+                onClick={() => {
+                    setCurrentWeekStart((previousWeek) => {
+                        const newWeek = new Date(previousWeek);
+                        newWeek.setDate(newWeek.getDate() + 7);
+                        return newWeek;
+                    });
+                }}
+            >
+                <span className="material-symbols-outlined">chevron_right</span>
+            </button>
 
-          <button className="today-btn">Today</button>
+            <button
+                type="button"
+                className="today-btn"
+                onClick={() => {
+                    const today = new Date();
+                    const day = today.getDay();
+                    const monday = new Date(today);
+                    monday.setDate(today.getDate() - (day === 0 ? 6 : day - 1));
+                    monday.setHours(0, 0, 0, 0);
+                    setCurrentWeekStart(monday);
+                }}
+            >
+                Today
+            </button>
 
             <button
                 type="button"
@@ -445,11 +574,59 @@ function Doctors() {
       {/* Department Schedule Matrix */}
       <section className="department-schedule">
 
+        {activeScheduleView === 'day' && (
+            <div className="day-schedule-controls">
+                <label htmlFor="schedule-date">Select Date:</label>
+                <input
+                    id="schedule-date"
+                    type="date"
+                    value={selectedScheduleDate}
+                    onChange={(event) => setSelectedScheduleDate(event.target.value)}
+                />
+                <span>{daySchedules.length} schedules found</span>
+            </div>
+        )}
+
+        {activeScheduleView === 'department' && (
+            <div className="day-schedule-controls">
+                <label htmlFor="schedule-department">
+                    Select Department:
+                </label>
+
+                <select
+                    id="schedule-department"
+                    value={selectedDepartment}
+                    onChange={(event) => setSelectedDepartment(event.target.value)}
+                >
+                    <option value="All">All Departments</option>
+
+                    {[...new Set(
+                        registeredDoctors.map((doctor) => doctor.department)
+                    )].filter(Boolean).map((department) => (
+                        <option key={department} value={department}>
+                            {department}
+                        </option>
+                    ))}
+                </select>
+
+                <span>{departmentSchedules.length} schedules found</span>
+            </div>
+        )}
+
         <div className="schedule-matrix-header">
           <div className="schedule-matrix-title">
             <span className="matrix-title-dot"></span>
             <div>
               <h2>Department Schedule Matrix</h2>
+                <h2>
+                    {activeScheduleView === 'roster'
+                        ? 'Doctor Roster Table'
+                        : activeScheduleView === 'day'
+                            ? 'Daily Doctor Schedule'
+                            : activeScheduleView === 'department'
+                                ? 'Department Schedule View'
+                                : 'Department Schedule Matrix'}
+                </h2>
               <p>Live clinical bed & cabin assignment (Monday – Sunday)</p>
             </div>
           </div>
@@ -468,94 +645,175 @@ function Doctors() {
                 <p>Loading doctor schedules...</p>
             ) : schedulesError ? (
                 <p>{schedulesError}</p>
-            ) : doctorSchedules.length === 0 ? (
-                
-                <div className="schedule-empty-state">
-                    <div className="schedule-empty-icon">
-                        <span className="material-symbols-outlined">
-                            calendar_month
-                        </span>
-                    </div>
+            ) : activeScheduleView === 'weekly' ? (
 
-                    <h3>No Doctor Schedules Yet</h3>
+                <div className="weekly-calendar-grid">
+                    {weekDays.map((day) => (
+                        <div
+                            className={`weekly-calendar-day ${
+                                day.dateKey === new Date().toLocaleDateString('en-CA')
+                                    ? 'today-highlight'
+                                    : ''
+                            }`}
+                            key={day.dateKey}
+                        >
+                            <div className="weekly-calendar-day-header">
+                                <strong>{day.dayName}</strong>
+                                <span>{day.dayNumber}</span>
+                            </div>
 
-                    <p>
-                        There are currently no schedules available.
-                        Create a new doctor schedule to get started.
-                    </p>
+                            <div className="weekly-calendar-day-content">
+                                {day.schedules.length === 0 ? (
+                                    <p className="weekly-calendar-empty">
+                                        No schedules
+                                    </p>
+                                ) : (
+                                    day.schedules.map((schedule) => (
+                                        <div
+                                            className="weekly-schedule-card"
+                                            key={schedule.id}
+                                        >
+                                            <strong>
+                                                Dr. {schedule.doctor?.firstName}{' '}
+                                                {schedule.doctor?.lastName}
+                                            </strong>
+
+                                            <span>{schedule.activity}</span>
+
+                                            <span>
+                                                {new Date(`2000-01-01T${schedule.startTime}`).toLocaleTimeString(
+                                                    'en-US',
+                                                    { hour: '2-digit', minute: '2-digit', hour12: true }
+                                                )}
+                                                {' - '}
+                                                {new Date(`2000-01-01T${schedule.endTime}`).toLocaleTimeString(
+                                                    'en-US',
+                                                    { hour: '2-digit', minute: '2-digit', hour12: true }
+                                                )}
+                                            </span>
+
+                                            <span>{schedule.room || 'No Room'}</span>
+
+                                            <span
+                                                className={`schedule-status status-${schedule.status
+                                                    ?.toLowerCase()
+                                                    .replace(/\s+/g, '-')}`}
+                                            >
+                                                {schedule.status}
+                                            </span>
+
+                                            <div className="weekly-schedule-actions">
+                                                <button
+                                                    type="button"
+                                                    className="doctor-edit-btn"
+                                                    onClick={() => {
+                                                        setScheduleToEdit(schedule);
+                                                        setIsScheduleFormOpen(true);
+                                                    }}
+                                                >
+                                                    Edit
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    className="doctor-delete-btn"
+                                                    onClick={() => handleDeleteSchedule(schedule.id)}
+                                                >
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </div>
+                    ))}
                 </div>
 
             ) : (
-                <table className="schedule-matrix-table">
-                    <thead>
-                        <tr>
-                            <th>Doctor</th>
-                            <th>Department</th>
-                            <th>Date</th>
-                            <th>Activity</th>
-                            <th>Start Time</th>
-                            <th>End Time</th>
-                            <th>Room</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
+                (() => {
+                    const displayedSchedules =
+                        activeScheduleView === 'day'
+                            ? daySchedules
+                            : activeScheduleView === 'department'
+                                ? departmentSchedules
+                                : doctorSchedules;
 
-                    <tbody>
-                        {doctorSchedules.map((schedule) => (
-                            <tr key={schedule.id}>
-                                <td>
-                                    Dr. {schedule.doctor?.firstName}{' '}
-                                    {schedule.doctor?.lastName}
-                                </td>
-                                <td>{schedule.doctor?.department}</td>
-                                <td>{schedule.scheduleDate}</td>
-                                <td>{schedule.activity}</td>
-                                <td>
-                                    {new Date(`2000-01-01T${schedule.startTime}`).toLocaleTimeString(
-                                        'en-US',
-                                        { hour: '2-digit', minute: '2-digit' }
-                                    )}
-                                </td>
+                    return displayedSchedules.length === 0 ? (
+                        <div className="schedule-empty-state">
+                            <div className="schedule-empty-icon">
+                                <span className="material-symbols-outlined">
+                                    calendar_month
+                                </span>
+                            </div>
 
-                                <td>
-                                    {new Date(`2000-01-01T${schedule.endTime}`).toLocaleTimeString(
-                                        'en-US',
-                                        { hour: '2-digit', minute: '2-digit' }
-                                    )}
-                                </td>
-                                <td>{schedule.room || '-'}</td>
-                                <td>{schedule.status}</td>
+                            <h3>No Doctor Schedules Yet</h3>
 
-                                <td>
-                                    <button
-                                        type="button"
-                                        className="doctor-edit-btn"
-                                        onClick={() => {
-                                            setScheduleToEdit(schedule);
-                                            setIsScheduleFormOpen(true);
-                                        }}
-                                    >
-                                        <span className="material-symbols-outlined">edit</span>
-                                        Edit
-                                    </button>
-                                </td>
+                            <p>
+                                There are currently no schedules available.
+                                Create a new doctor schedule to get started.
+                            </p>
+                        </div>
+                    ) : (
+                        <table className="schedule-matrix-table">
+                            <thead>
+                                <tr>
+                                    <th>Doctor</th>
+                                    <th>Department</th>
+                                    <th>Date</th>
+                                    <th>Activity</th>
+                                    <th>Start Time</th>
+                                    <th>End Time</th>
+                                    <th>Room</th>
+                                    <th>Status</th>
+                                    <th>Edit</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
 
-                                <td>
-                                    <button
-                                        type="button"
-                                        className="doctor-delete-btn"
-                                        onClick={() => handleDeleteSchedule(schedule.id)}
-                                    >
-                                        <span className="material-symbols-outlined">
-                                            delete
-                                        </span>
-                                        Delete
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                            <tbody>
+                                {displayedSchedules.map((schedule) => (
+                                    <tr key={schedule.id}>
+                                        <td>
+                                            Dr. {schedule.doctor?.firstName}{' '}
+                                            {schedule.doctor?.lastName}
+                                        </td>
+                                        <td>{schedule.doctor?.department}</td>
+                                        <td>{schedule.scheduleDate}</td>
+                                        <td>{schedule.activity}</td>
+                                        <td>{schedule.startTime}</td>
+                                        <td>{schedule.endTime}</td>
+                                        <td>{schedule.room || '-'}</td>
+                                        <td>{schedule.status}</td>
+
+                                        <td>
+                                            <button
+                                                type="button"
+                                                className="doctor-edit-btn"
+                                                onClick={() => {
+                                                    setScheduleToEdit(schedule);
+                                                    setIsScheduleFormOpen(true);
+                                                }}
+                                            >
+                                                Edit
+                                            </button>
+                                        </td>
+
+                                        <td>
+                                            <button
+                                                type="button"
+                                                className="doctor-delete-btn"
+                                                onClick={() => handleDeleteSchedule(schedule.id)}
+                                            >
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    );
+                })()
             )}
         </div>
 
